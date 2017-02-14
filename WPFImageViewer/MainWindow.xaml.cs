@@ -25,8 +25,6 @@ namespace WPFImageViewer
         int defaultImageIndex = 0;//used to navigate throught the listOfFiles variable
         public string defaultMedia = null;//holds the path of the current media
         bool isMediaPlaying = true;
-        string defaultMediaExtension = null;
-        char defaultMediaType = 'z';//z is just a placeholder
         short zoomIndex = 0;
         System.Drawing.Point lastDrag = new System.Drawing.Point();
         int[] originalImageDimensions = new int[2];
@@ -68,6 +66,11 @@ namespace WPFImageViewer
         Point newPt;
         Point oriMediaRatio = new Point();
         bool firstRatioCheck = true;
+        LoadingControl loading = new LoadingControl();
+        enum MediaType { Video, Audio, Image }
+        enum MediaExtension { JPEG, PNG, GIF, MP4, WEBM, MKV, AVI, MP3, WAV, WMV }
+        MediaType mediaType;
+        MediaExtension mediaExtension;
         #endregion
 
 
@@ -109,6 +112,8 @@ namespace WPFImageViewer
                 hasTimeSpan = false;
                 if (TaskbarItemInfo != null) TaskbarItemInfo = null;
             }
+
+            loading.StopAnimation();
         }
         #endregion
 
@@ -135,12 +140,6 @@ namespace WPFImageViewer
         private void mainWindow_Loaded(object sender, RoutedEventArgs e)
         {
             loadConfigsDelay();
-
-            LoadingControl lc = new LoadingControl();
-            lc.Left = mainGrid.ActualWidth / 2 - lc.Width / 2;
-            lc.Top = mainGrid.ActualHeight / 2 - lc.Height / 2;
-            mainMediaGrid.Children.Add(lc.ControlArea());
-            lc.PlayAnimation();
         }
 
 
@@ -438,7 +437,7 @@ namespace WPFImageViewer
         #region mainWindow_PreviewKeyDown
         private void mainWindow_PreviewKeyDown(object sender, KeyEventArgs e)
         {
-            if (defaultMediaType == 'v' || defaultMediaType == 'a')
+            if (mediaType == MediaType.Video || mediaType == MediaType.Audio)
             {
                 if (e.Key == Key.Space)
                 {
@@ -478,7 +477,7 @@ namespace WPFImageViewer
 
                     nextButton_Click(sender, eM);
                 }
-                else if (e.Key == Key.Space && defaultMediaExtension == ".gif")
+                else if (e.Key == Key.Space && mediaExtension == MediaExtension.GIF)
                 {
                     if (isMediaPlaying)
                     {
@@ -547,7 +546,7 @@ namespace WPFImageViewer
                         revertZoom();
                     }
                 }
-                else if (e.Key == Key.C && defaultMediaExtension != ".gif")
+                else if (e.Key == Key.C && mediaExtension != MediaExtension.GIF)
                 {
                     if (!isCropEnabled)
                     {
@@ -801,18 +800,20 @@ namespace WPFImageViewer
         public void setMainMedia()
         {
             #region Variables/objects reset
+            //Do not change the order of any of the objects/variables in this region
             navigationGrid.IsHitTestVisible = false;
             navigationGridWhite.Visibility = Visibility.Collapsed;
             timer.Stop();
             mainMedia.Stop();
-            isMediaPlaying = false;
             getMediaType();
+            if (isMediaPlaying && mediaType == MediaType.Image) { loading.StopAnimation(); }
+            isMediaPlaying = false;
             lblFileName.Content = null;
             #endregion
 
             try
             {
-                if (defaultMediaType == 'v' || defaultMediaExtension == ".gif" || defaultMediaType == 'a')
+                if (mediaType == MediaType.Video || mediaExtension == MediaExtension.GIF || mediaType == MediaType.Audio)
                 {
                     #region Variables/objects reset
                     if (mainImage.Source != null) mainImage.Source = null;
@@ -822,11 +823,13 @@ namespace WPFImageViewer
                     #endregion
 
                     if (File.Exists(defaultMedia))
-                    {
-                        mainMedia.Source = new Uri(defaultMedia, UriKind.Absolute);
+                    {              
+                        mainMedia.Source = new Uri(defaultMedia, UriKind.Absolute);                      
                         fileName = System.IO.Path.GetFileName(defaultMedia);
                         mainMedia.Play();
                         isMediaPlaying = true;
+
+                        loading.PlayAnimation();
                     }
                     else
                     {
@@ -850,7 +853,7 @@ namespace WPFImageViewer
                     mainImage.Source = image;
                     fileName = System.IO.Path.GetFileName(defaultMedia);
 
-                    ImageBackGround.Visibility = (defaultMediaExtension == ".png") ? ImageBackGround.Visibility = Visibility.Visible : ImageBackGround.Visibility = Visibility.Collapsed;
+                    ImageBackGround.Visibility = (mediaExtension == MediaExtension.PNG) ? ImageBackGround.Visibility = Visibility.Visible : ImageBackGround.Visibility = Visibility.Collapsed;
                 }
             }
             catch (FileNotFoundException)
@@ -1012,7 +1015,7 @@ namespace WPFImageViewer
         private void openPicture()
         {
             System.Windows.Forms.OpenFileDialog openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
-            openFileDialog1.Filter = "All supported images|*.jpg;*.png;*.gif;*.jpeg;*.mp4;*.webm;*.mkv;*.avi;*.mp3";
+            openFileDialog1.Filter = "All supported images|*.jpg;*.png;*.gif;*.jpeg;*.mp4;*.webm;*.mkv;*.avi;*.mp3;*.wav;*.wmv";
             openFileDialog1.FileName = null;
             System.Windows.Forms.DialogResult result = openFileDialog1.ShowDialog();
 
@@ -1028,27 +1031,51 @@ namespace WPFImageViewer
         #region getMediaType
         private void getMediaType()
         {
-            defaultMediaExtension = System.IO.Path.GetExtension(defaultMedia);
-
-            switch (defaultMediaExtension)
+            switch (System.IO.Path.GetExtension(defaultMedia))
             {
+                case ".jpg":
+                    mediaType = MediaType.Image;
+                    mediaExtension = MediaExtension.JPEG;
+                    break;
+                case ".png":
+                    mediaType = MediaType.Image;
+                    mediaExtension = MediaExtension.PNG;
+                    break;
+                case ".gif":
+                    mediaType = MediaType.Video;
+                    mediaExtension = MediaExtension.GIF;
+                    break;
                 case ".mp4":
-                    defaultMediaType = 'v';
+                    mediaType = MediaType.Video;
+                    mediaExtension = MediaExtension.MP4;
                     break;
                 case ".webm":
-                    defaultMediaType = 'v';
+                    mediaType = MediaType.Video;
+                    mediaExtension = MediaExtension.WEBM;
+                    break;
+                case ".jpeg":
+                    mediaType = MediaType.Image;
+                    mediaExtension = MediaExtension.JPEG;
                     break;
                 case ".mkv":
-                    defaultMediaType = 'v';
+                    mediaType = MediaType.Video;
+                    mediaExtension = MediaExtension.MKV;
                     break;
                 case ".avi":
-                    defaultMediaType = 'v';
+                    mediaType = MediaType.Video;
+                    mediaExtension = MediaExtension.AVI;
+                    break;
+                case ".wmv":
+                    mediaType = MediaType.Video;
+                    mediaExtension = MediaExtension.WMV;
                     break;
                 case ".mp3":
-                    defaultMediaType = 'a';
+                    mediaType = MediaType.Audio;
+                    mediaExtension = MediaExtension.MP3;
                     break;
-                default:
-                    defaultMediaType = 'i';
+                case ".wav":
+                    mediaType = MediaType.Audio;
+                    mediaExtension = MediaExtension.WAV;
                     break;
             }
         }
@@ -1130,7 +1157,7 @@ namespace WPFImageViewer
 
         private void showNavigationControls()
         {
-            if (defaultMediaType == 'v' || defaultMediaType == 'a')
+            if (mediaType == MediaType.Video || mediaType == MediaType.Audio)
             {
                 canceLTokenNavigation();
                 navigationGridWhite.Visibility = Visibility.Visible;
@@ -1223,7 +1250,9 @@ namespace WPFImageViewer
             Width = settings.Width;
             Height = settings.Height;
             isInitResize = true;
+            mainMediaGrid.Children.Add(loading.ClientBounds);
         }
+
 
         public void canceLTokenTitle()
         {
