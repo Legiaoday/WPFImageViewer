@@ -109,9 +109,6 @@ namespace WPFImageViewer
                 hasTimeSpan = false;
                 if (TaskbarItemInfo != null) TaskbarItemInfo = null;
             }
-
-            mainMedia.Play();
-            isMediaPlaying = true;
         }
         #endregion
 
@@ -820,8 +817,10 @@ namespace WPFImageViewer
 
                     if (File.Exists(defaultMedia))
                     {
-                        mainMedia.Source = new Uri(defaultMedia);
+                        mainMedia.Source = new Uri(defaultMedia, UriKind.Absolute);
                         fileName = System.IO.Path.GetFileName(defaultMedia);
+                        mainMedia.Play();
+                        isMediaPlaying = true;
                     }
                     else
                     {
