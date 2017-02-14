@@ -1,0 +1,142 @@
+﻿<Window x:Name="mainWindow" x:Class="WPFImageViewer.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WPFImageViewer"
+        mc:Ignorable="d"
+        Title="WPFImageViewer" Height="360" Width="640" WindowStartupLocation="CenterScreen" MinWidth="409" MinHeight="230" Icon="multimedia.ico"
+        PreviewKeyDown="mainWindow_PreviewKeyDown" WindowStyle="None" StateChanged="mainWindow_StateChanged" AllowsTransparency="True" ResizeMode="CanMinimize" Closing="mainWindow_Closing" Loaded="mainWindow_Loaded"
+        SizeChanged="mainWindow_SizeChanged" LocationChanged="mainWindow_LocationChanged" Deactivated="mainWindow_Deactivated" MouseMove="mainWindow_MouseMove">
+    <Window.Background>
+        <SolidColorBrush Opacity="0.9" Color="#FF171717"/>
+    </Window.Background>
+    <Grid x:Name="mainGrid" Margin="0,0,0,0">
+        <Grid x:Name="mainMediaGrid" Background="Transparent" SizeChanged="mainMediaGrid_SizeChanged">
+            <Grid.ContextMenu>
+                <ContextMenu x:Name="mediaGridContextMenu">
+                    <MenuItem Header="Open Media" Click="openMedia_Click"/>
+                    <MenuItem Header="Close" Click="closeApp_Click"/>
+                </ContextMenu>
+            </Grid.ContextMenu>
+            <MediaElement x:Name="mainMedia" MediaEnded="mainMedia_MediaEnded" UnloadedBehavior="Manual" ScrubbingEnabled="True"
+                          LoadedBehavior="Manual" Stretch="Uniform" MediaOpened="mainMedia_MediaOpened" Volume="1" MouseDown="mainMedia_MouseDown">
+                <MediaElement.ContextMenu>
+                    <ContextMenu x:Name="mediaContextMenu">
+                        <MenuItem Header="Open Media" Click="openMedia_Click"/>
+                        <MenuItem Header="More" SubmenuOpened="more_SubmenuOpened">
+                            <MenuItem Header="Open in the Explorer" Click="openExplorer_Click"/>
+                            <MenuItem Header="Save Media Copy" Click="saveMediaCopy_Click"/>
+                            <MenuItem Header="After playback" SubmenuOpened="afterP_SubmenuOpened">
+                                <MenuItem Name="afterPLoop" Header="Loop" Checked="afterPlayback_Checked" IsCheckable="True"/>
+                                <MenuItem Name="afterPNothing" Header="Do nothing" Checked="afterPlayback_Checked" IsCheckable="True"/>
+                                <MenuItem Name="afterPNext" Header="Play next video" Checked="afterPlayback_Checked" IsCheckable="True"/>
+                            </MenuItem>
+                            <MenuItem Header="Order files by..." SubmenuOpened="orderB_SubmenuOpened">
+                                <MenuItem Name="orderBName" Header="Name" Checked="orderBy_Checked" IsCheckable="True"/>
+                                <MenuItem Name="orderBDate" Header="Date" Checked="orderBy_Checked" IsCheckable="True"/>
+                            </MenuItem>
+                            <MenuItem Name="keepRatio" Header="Keep aspect ratio while resizing" PreviewMouseDown="keepRatio_Checked" IsCheckable="True"/>
+                        </MenuItem>
+                        <MenuItem Header="Save as image..." Click="snapshot_Click"/>
+                        <MenuItem Header="Close" Click="closeApp_Click"/>
+                    </ContextMenu>
+                </MediaElement.ContextMenu>
+            </MediaElement>
+            <Border x:Name="ImageBackGround" Background="#FF404040" Visibility="Collapsed"/>
+            <Image x:Name="mainImage" PreviewMouseDown="mainImage_PreviewMouseDown" SizeChanged="mainImage_SizeChanged" PreviewMouseUp="mainImage_PreviewMouseUp" MouseLeave="mainImage_MouseLeave" MouseMove="mainImage_MouseMove">
+                <Image.ContextMenu>
+                    <ContextMenu x:Name="imageContextMenu">
+                        <MenuItem Header="Open Media" Click="openMedia_Click"/>
+                        <MenuItem Header="Crop Mode" Click="cropMode_Click"/>
+                        <MenuItem Header="More" SubmenuOpened="more_SubmenuOpened">
+                            <MenuItem Header="Open in the Explorer" Click="openExplorer_Click"/>
+                            <MenuItem Header="Set as Desktop Background">
+                                <MenuItem x:Name="stretch" Header="Stretch" Click="backgroundMenuItem_Click"/>
+                                <MenuItem x:Name="fit" Header="Fit" Click="backgroundMenuItem_Click"/>
+                                <MenuItem x:Name="fill" Header="Fill" Click="backgroundMenuItem_Click"/>
+                                <MenuItem x:Name="center" Header="Center" Click="backgroundMenuItem_Click"/>
+                                <MenuItem x:Name="tile" Header="Tile" Click="backgroundMenuItem_Click"/>
+                            </MenuItem>
+                            <MenuItem x:Name="zoomMenuItem" Header="Zoom" SubmenuOpened="zoomManuItem_SubmenuOpened">
+                                <MenuItem x:Name="zoom25" Header="25%" IsCheckable="True" Checked="zoomPercentage_Checked"/>
+                                <MenuItem x:Name="zoom50" Header="50%" IsCheckable="True" Checked="zoomPercentage_Checked"/>
+                                <MenuItem x:Name="zoom65" Header="65%" IsCheckable="True" Checked="zoomPercentage_Checked"/>
+                                <MenuItem x:Name="zoom75" Header="75%" IsCheckable="True" Checked="zoomPercentage_Checked"/>
+                                <MenuItem x:Name="zoom85" Header="85%" IsCheckable="True" Checked="zoomPercentage_Checked"/>
+                                <MenuItem x:Name="zoom100" Header="100%" IsCheckable="True" Checked="zoomPercentage_Checked"/>
+                                <MenuItem x:Name="zoom150" Header="150%" IsCheckable="True" Checked="zoomPercentage_Checked"/>
+                                <MenuItem x:Name="zoom200" Header="200%" IsCheckable="True" Checked="zoomPercentage_Checked"/>
+                            </MenuItem>
+                            <MenuItem Header="Order files by..." SubmenuOpened="orderB_SubmenuOpened">
+                                <MenuItem Name="orderBName2" Header="Name" Checked="orderBy_Checked" IsCheckable="True"/>
+                                <MenuItem Name="orderBDate2" Header="Date" Checked="orderBy_Checked" IsCheckable="True"/>
+                            </MenuItem>
+                            <MenuItem Header="Save Image as..." Click="saveImage_Click"/>
+                            <MenuItem Name="keepRatio2" Header="Keep aspect ratio while resizing" PreviewMouseDown="keepRatio_Checked" IsCheckable="True"/>
+                        </MenuItem>
+                        <MenuItem Header="Close" Click="closeApp_Click"/>
+                    </ContextMenu>
+                </Image.ContextMenu>
+            </Image>
+            <Canvas x:Name="imageCanvas" IsHitTestVisible="False" ClipToBounds="True"/>
+        </Grid>
+        <Grid x:Name="navigationGrid" Background="Transparent" Height="54" VerticalAlignment="Bottom" IsHitTestVisible="False" MouseEnter="navigationGrid_MouseEnter" MouseLeave="navigationGrid_MouseLeave">
+            <Grid x:Name="navigationGridWhite" Height="54" VerticalAlignment="Bottom">
+                <Slider x:Name="seekBar" Background="White" Margin="0,0,0,30" IsTabStop="False" IsHitTestVisible="False"/>
+                <Popup x:Name="fTT" VerticalOffset="-18" AllowsTransparency="false" Placement="Relative" IsHitTestVisible="False">
+                    <TextBlock x:Name="fText" Background="WhiteSmoke" Foreground="Black" IsHitTestVisible="False"></TextBlock>
+                </Popup>
+                <Grid Name="seekGrid" Background="Transparent" IsHitTestVisible="True" Margin="4,0,4,38" MouseDown="seekBar_MouseDown" MouseMove="seekBar_MouseMove" MouseLeave="seekBar_MouseLeave" MouseEnter="seekBar_MouseEnter"/>
+                <Grid Background="Transparent" IsHitTestVisible="True" HorizontalAlignment="Right" Width="4" Margin="0,0,0,30"/>
+                <Grid Background="Transparent" IsHitTestVisible="True" HorizontalAlignment="Left" Width="4" Margin="0,0,0,30"/>
+                <Label x:Name="lblmediaTimeSpan" Margin="0,18,10,10" Grid.RowSpan="2" HorizontalAlignment="Right" Width="54" Foreground="Black"/>
+                <Label x:Name="lblseekerValue" Margin="10,18,0,10" Grid.RowSpan="2" HorizontalAlignment="Left" Width="54" Foreground="Black" />
+                <Grid x:Name="volumeGrid" Margin="0,-54,78,6" Grid.RowSpan="2" MouseEnter="volumeTriangle_MouseEnter" MouseLeave="volumeTriangle_MouseLeave" Background="#FFA8A8A8" HorizontalAlignment="Right" Width="50" Height="102" VerticalAlignment="Center">
+                    <Slider x:Name="volumeSlider" Maximum="100" SmallChange="1" ValueChanged="volumeSlider_ValueChanged" Margin="14,6,14,10" Width="22" IsMoveToPointEnabled="True" IsTabStop="False" Orientation="Vertical" Value="100"/>
+                </Grid>
+                <Polygon x:Name="volumeTriangle" Points="50,-5 50,10, 0,10" Fill="DarkSlateBlue" MouseEnter="volumeTriangle_MouseEnter" MouseDown="volumeTriangle_MouseDown" MouseLeave="volumeTriangle_MouseLeave" VerticalAlignment="Bottom" Margin="0,0,78,6" Grid.Row="1" HorizontalAlignment="Right" Width="50"/>
+                <Label x:Name="lblVolume" Content="100" FontSize="10" Foreground="White" Margin="0,0,74,2" IsHitTestVisible="False"  HorizontalContentAlignment="Right" Grid.RowSpan="2" HorizontalAlignment="Right" Width="26" Height="21" VerticalAlignment="Bottom"/>
+                <Grid.Background>
+                    <SolidColorBrush Opacity="1" Color="White"/>
+                </Grid.Background>
+            </Grid>
+        </Grid>
+        <Grid x:Name="titleBarGrid" Background="Transparent" Height="21" VerticalAlignment="Top" MouseEnter="titleBarGrid_MouseEnter" MouseLeave="titleBarGrid_MouseLeave">
+            <Grid x:Name="titleBarGridWhite" Background="Transparent" Height="21" VerticalAlignment="Top">
+                <Grid x:Name="backGid" Opacity="0.5" Background="#FF171717" HorizontalAlignment="Right" Width="82"/>
+                <Label x:Name="lblFileName" Margin="0,-6,82,0" IsHitTestVisible="False" FontSize="12" Foreground="White" HorizontalContentAlignment="Center" Height="27" VerticalAlignment="Center">
+                    <Label.Background>
+                        <SolidColorBrush Opacity="0.5" Color="#FF171717"/>
+                    </Label.Background>
+                </Label>
+                <Grid x:Name="dragGrid" Background="Transparent" Cursor="SizeAll" PreviewMouseDown="dragGrid_PreviewMouseDown" Margin="0,0,82,0"/>
+                <Button x:Name="closeButton" Content="✕" Margin="0,0,0,0" Focusable="False" Click="closeButton_Click" HorizontalAlignment="Right" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" Background="#FFFF3737" VerticalAlignment="Stretch" Width="24"/>
+                <Button x:Name="maximizeButton" Content="□" Margin="0,0,29,0" Focusable="False" Click="maximizeButton_Click" HorizontalAlignment="Right" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" Background="#FF2D8CFF" VerticalAlignment="Stretch" Width="24"/>
+                <Button x:Name="minimizeButton" Content="_" Margin="0,0,58,0" Focusable="False" Click="minimizeButton_Click" HorizontalAlignment="Right" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" Background="#FF168726" VerticalAlignment="Stretch" Width="24"/>
+            </Grid>
+        </Grid>
+        <Grid x:Name="nextButtonGrid" Margin="0,0,0,0" HorizontalAlignment="Right" Width="32" Height="122" Background="Transparent" MouseEnter="nextButtonGrid_MouseEnter" MouseLeave="nextButtonGrid_MouseLeave">
+            <Button x:Name="nextButton" Content="❭" FontSize="60" Margin="0,0,0,0" Foreground="White" HorizontalContentAlignment="Right" 
+                    Height="122" Focusable="False" IsTabStop="False" Click="nextButton_Click" HorizontalAlignment="Right" Width="32" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}">
+                <Button.Background>
+                    <SolidColorBrush Opacity="0.5" Color="#FF171717"/>
+                </Button.Background>
+            </Button>
+        </Grid>
+        <Grid x:Name="previousButtonGrid" Margin="0,0,0,0" HorizontalAlignment="Left" Width="32" Height="122" Background="Transparent" MouseEnter="previousButtonGrid_MouseEnter" MouseLeave="previousButtonGrid_MouseLeave">
+            <Button x:Name="previousButton" Content="❬"  FontSize="60" Margin="0,0,0,0" Foreground="White" HorizontalContentAlignment="Left" Height="122" Focusable="False" IsTabStop="False" 
+                    Click="previousButton_Click" HorizontalAlignment="Left" Width="32"  Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}">
+                <Button.Background>
+                    <SolidColorBrush Opacity="0.5" Color="#FF171717"/>
+                </Button.Background>
+            </Button>
+        </Grid>
+        <Grid x:Name="gripGrid" HorizontalAlignment="Right" Width="16" Height="16" VerticalAlignment="Bottom" MouseEnter="gripGrid_MouseEnter" MouseLeave="gripGrid_MouseLeave" Background="Transparent">
+            <DockPanel>
+                <ResizeGrip  Name="grip" Cursor="SizeNWSE" Height="16" Background="Transparent" Width="13" Visibility="Collapsed" MouseDown="grip_MouseDown" MouseUp="grip_MouseUp" HorizontalAlignment="Right" VerticalAlignment="Bottom"/>
+            </DockPanel>
+        </Grid>
+    </Grid>
+</Window>
+    

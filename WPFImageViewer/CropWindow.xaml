@@ -1,0 +1,40 @@
+﻿<Window x:Class="WPFImageViewer.CropWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WPFImageViewer"
+        mc:Ignorable="d"
+        Title="Cropped Image"  Icon="multimedia.ico" Height="360" Width="640" WindowStyle="None"  AllowsTransparency="True" WindowStartupLocation="CenterScreen" ResizeMode="NoResize" KeyDown="Window_KeyDown">
+    <Window.Background>
+        <SolidColorBrush Opacity="0.8" Color="#FF1069D3"/>
+    </Window.Background>
+    <Grid Background="Transparent">
+        <Image x:Name="croppedImage" Margin="4">
+            <Image.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="Invert colors" Click="invert_Click"/>
+                    <MenuItem Header="Rotate 90º to the Right" Click="rotate90right_Click"/>
+                    <MenuItem Header="Rotate 90º to the Left" Click="rotate90left_Click"/>
+                    <MenuItem Header="Rotate 180º" Click="rotate180_Click"/>
+                </ContextMenu>
+            </Image.ContextMenu>
+         </Image>
+        <Button x:Name="saveCrop" Click="saveCrop_Click" Content="Save Cropped Image" Height="24" VerticalAlignment="Bottom" HorizontalAlignment="Center" Width="138" Margin="0,0,0,10"/>
+        <Button x:Name="closeButton" Content="✕" Focusable="False" Click="closeButton_Click" HorizontalAlignment="Right" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" Background="#FFFF3737" VerticalAlignment="Top" Width="24" Height="21"/>
+        <Button x:Name="flipHor" Content="⟳" FontSize="15" Height="24" Margin="394,0,221,10"  VerticalAlignment="Bottom" HorizontalAlignment="Center" Width="25" Click="flipHor_Click">
+            <Button.ToolTip>
+                <ToolTip>
+                    <TextBlock>Flip image horizontally.</TextBlock>
+                </ToolTip>
+            </Button.ToolTip>
+        </Button>
+        <Button x:Name="flipVer" Content="↻" FontSize="15" Height="24" Margin="221,0,394,10"  VerticalAlignment="Bottom" HorizontalAlignment="Center" Width="25" Click="flipVer_Click">
+            <Button.ToolTip>
+                <ToolTip>
+                    <TextBlock>Flip image vertically.</TextBlock>
+                </ToolTip>
+            </Button.ToolTip>
+        </Button>
+    </Grid>
+</Window>
