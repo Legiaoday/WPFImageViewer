@@ -135,6 +135,12 @@ namespace WPFImageViewer
         private void mainWindow_Loaded(object sender, RoutedEventArgs e)
         {
             loadConfigsDelay();
+
+            LoadingControl lc = new LoadingControl();
+            lc.Left = mainGrid.ActualWidth / 2 - lc.Width / 2;
+            lc.Top = mainGrid.ActualHeight / 2 - lc.Height / 2;
+            mainMediaGrid.Children.Add(lc.ControlArea());
+            lc.PlayAnimation();
         }
 
 
