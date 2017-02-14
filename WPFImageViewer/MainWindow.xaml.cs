@@ -1921,38 +1921,9 @@ namespace WPFImageViewer
             return renderTargetBitmap;
         }
         #endregion
-
-
-        #region Debug methods
-        //#if DEBUG
-        //System.Windows.Controls.Primitives.Popup debugP1 = new System.Windows.Controls.Primitives.Popup();
-        //TextBlock debugT1 = new TextBlock(); 
-
-
-        //private void initializeDebug ()
-        //{
-        //    debugT1.Background = new SolidColorBrush() { Color = Colors.White };
-        //    debugP1.Child = debugT1;
-        //    debugP1.IsHitTestVisible = false;
-        //    debugP1.Placement = System.Windows.Controls.Primitives.PlacementMode.RelativePoint;
-        //    debugP1.HorizontalOffset = 0;
-        //    debugP1.VerticalOffset = 0;
-        //    debugP1.IsOpen = true;
-        //}
-
-
-        //private void popDebug ()
-        //{
-        //    debugT1.Text = "oriMediaRatio.Y: " + oriMediaRatio.Y + "\noriMediaRatio.X: " + oriMediaRatio.X
-        //        + "\nreWidth: " + reWidth + "\nActualWidth: " + ActualWidth
-        //        + "\nActualHeight: " + ActualHeight;
-        //}
-        //#endif 
-        #endregion
         #endregion
 
 
-        
-
+       
     }
 }

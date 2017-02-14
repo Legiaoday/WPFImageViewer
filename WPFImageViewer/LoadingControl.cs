@@ -91,7 +91,12 @@ namespace WPFImageViewer
         private Rectangle square4;
         private Rectangle square5;
         private Thread loadingThread;
-
+        private DispatcherTimer timer;
+        private double opacitySub1 = 20;
+        private double opacitySub2 = 40;
+        private double opacitySub3 = 60;
+        private double opacitySub4 = 80;
+        private double opacitySub5 = 100;
 
         public LoadingControl()
         {
@@ -162,26 +167,11 @@ namespace WPFImageViewer
         }
 
 
-        DispatcherTimer timer;
-        double opacitySub1 = 20;
-        double opacitySub2 = 40;
-        double opacitySub3 = 60;
-        double opacitySub4 = 80;
-        double opacitySub5 = 100;
-
-
         public void PlayAnimation ()
         {
             loadingThread = new Thread(loadingThreadWork);
             loadingThread.IsBackground = true;
             loadingThread.Start();
-        }
-
-
-        private void loadingThreadWork()
-        {
-            Application.Current.Dispatcher.Invoke(() => ClientBounds.Visibility = Visibility.Visible);
-            timer.Start();
         }
 
 
@@ -202,6 +192,13 @@ namespace WPFImageViewer
         }
 
 
+        private void loadingThreadWork()
+        {
+            Application.Current.Dispatcher.Invoke(() => ClientBounds.Visibility = Visibility.Visible);
+            timer.Start();
+        }
+
+      
         void timer_Tick(object sender, EventArgs e)
         {
             square1.Fill = new SolidColorBrush() { Color = Colors.AliceBlue, Opacity = opacitySub1 / 100 };
