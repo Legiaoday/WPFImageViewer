@@ -826,6 +826,7 @@ namespace WPFImageViewer
                     {              
                         mainMedia.Source = new Uri(defaultMedia, UriKind.Absolute);                      
                         fileName = System.IO.Path.GetFileName(defaultMedia);
+                        mainMedia.Visibility = Visibility.Visible;
                         mainMedia.Play();
                         isMediaPlaying = true;
 
@@ -840,8 +841,9 @@ namespace WPFImageViewer
                 else
                 {
                     #region Variables/objects resets
-                    if (mainMedia.Source != null) mainMedia.Source = null;
+                    if (mainMedia.Source != null) mainMedia.Source = null;                  
                     if (TaskbarItemInfo != null) TaskbarItemInfo = null;
+                    mainMedia.Visibility = Visibility.Collapsed;
                     #endregion
 
                     BitmapImage image = new BitmapImage();
