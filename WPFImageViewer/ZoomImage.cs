@@ -2,6 +2,7 @@
 using System.Windows.Media.Imaging;
 using System.Windows.Controls;
 using System.Windows;
+using System;
 
 namespace WPFImageViewer
 {
@@ -16,6 +17,13 @@ namespace WPFImageViewer
         public static void PerformeZoom(Image mainImage, Border ImageBackGround, string defaultMedia, WindowState arg3, Point windowPos, Point mainMediaGridDimen, short zoomPercentage)
         {
             int[] dimensions = GetSourceDimensions(defaultMedia);
+
+            if (dimensions[0] < mainMediaGridDimen.X && dimensions[1] < mainMediaGridDimen.Y)//if the source image is smaller than the mainImage the zoom will be applied to the mainImage dimensions rather than the actual source image dimensions
+            {
+                dimensions[0] = Convert.ToInt32(mainImage.ActualWidth);
+                dimensions[1] = Convert.ToInt32(mainImage.ActualHeight);
+            }
+
             dimensions[0] = dimensions[0] * zoomPercentage / 100;
             dimensions[1] = dimensions[1] * zoomPercentage / 100;
             mainImageDimensions = new Point(mainImage.ActualWidth, mainImage.ActualHeight);

@@ -497,8 +497,8 @@ namespace WPFImageViewer
                         Point mainWindowDimensions = new Point(mainWindow.ActualWidth, mainWindow.ActualHeight);
                         originalImageDimensions = ZoomImage.GetSourceDimensions(defaultMedia);
 
-                        if (mainWindowDimensions.X < originalImageDimensions[0] || mainWindowDimensions.Y < originalImageDimensions[1])
-                        {
+                        //if (mainWindowDimensions.X < originalImageDimensions[0] || mainWindowDimensions.Y < originalImageDimensions[1])
+                        //{
                             if (originalImageDimensions[0] < originalImageDimensions[1] && mainWindowDimensions.X > mainWindowDimensions.Y)
                             {
                                 ZoomImage.PerformeZoomTop(mainImage, ImageBackGround, mainWindowDimensions);
@@ -511,7 +511,7 @@ namespace WPFImageViewer
                                     ResizeMode = ResizeMode.CanMinimize;
                                 }
                             }
-                        }
+                        //}
                     }
                     else if (zoomIndex > 0)
                     {
@@ -525,8 +525,8 @@ namespace WPFImageViewer
                         Point mainWindowDimensions = new Point(mainWindow.ActualWidth, mainWindow.ActualHeight);
                         originalImageDimensions = ZoomImage.GetSourceDimensions(defaultMedia);
 
-                        if (mainWindowDimensions.X < originalImageDimensions[0] || mainWindowDimensions.Y < originalImageDimensions[1])
-                        {
+                        //if (mainWindowDimensions.X < originalImageDimensions[0] || mainWindowDimensions.Y < originalImageDimensions[1])
+                        //{
                             if (originalImageDimensions[0] < originalImageDimensions[1] && mainWindowDimensions.X > mainWindowDimensions.Y)
                             {
                                 ZoomImage.PerformeZoomBottom(mainImage, ImageBackGround, mainWindowDimensions);
@@ -539,7 +539,7 @@ namespace WPFImageViewer
                                     ResizeMode = ResizeMode.CanMinimize;
                                 }
                             }
-                        }
+                        //}
                     }
                     else if (zoomIndex > 0)
                     {
