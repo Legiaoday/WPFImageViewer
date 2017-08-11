@@ -303,13 +303,13 @@ namespace WPFImageViewer
                         Point mainMediaGridDimensions = new Point(mainMediaGrid.ActualWidth, mainMediaGrid.ActualHeight);
                         originalImageDimensions = ZoomImage.GetSourceDimensions(defaultMedia);
 
-                        if (mainMediaGridDimensions.X < originalImageDimensions[0] || mainMediaGridDimensions.Y < originalImageDimensions[1])
-                        {
+                        //if (mainMediaGridDimensions.X < originalImageDimensions[0] || mainMediaGridDimensions.Y < originalImageDimensions[1])
+                        //{
                             ZoomImage.PerformeZoom(mainImage, ImageBackGround, defaultMedia, WindowState, mainWindowPos, mainMediaGridDimensions, zoomPercentage);
                             zoomIndex++;
                             hideControlsZoom();
                             mainImage.Cursor = Cursors.Hand;
-                        }
+                        //}
                     }
                     else
                     {
