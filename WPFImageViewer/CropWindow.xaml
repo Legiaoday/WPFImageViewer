@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WPFImageViewer"
         mc:Ignorable="d"
-        Title="Cropped Image"  Icon="multimedia.ico" Height="360" Width="640" WindowStyle="None"  AllowsTransparency="True" WindowStartupLocation="CenterScreen" ResizeMode="NoResize" KeyDown="Window_KeyDown">
+        Title="Cropped Image"  Icon="multimedia.ico" Height="360" Width="640" WindowStyle="None"  AllowsTransparency="True" Loaded="Window_Loaded" WindowStartupLocation="CenterScreen" ResizeMode="NoResize" KeyDown="Window_KeyDown">
     <Window.Background>
         <SolidColorBrush Opacity="0.8" Color="#FF1069D3"/>
     </Window.Background>
@@ -22,6 +22,7 @@
          </Image>
         <Button x:Name="saveCrop" Click="saveCrop_Click" Content="Save Cropped Image" Height="24" VerticalAlignment="Bottom" HorizontalAlignment="Center" Width="138" Margin="0,0,0,10"/>
         <Button x:Name="closeButton" Content="✕" Focusable="False" Click="closeButton_Click" HorizontalAlignment="Right" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" Background="#FFFF3737" VerticalAlignment="Top" Width="24" Height="21"/>
+        <Button x:Name="maximizeButton" Content="□" Focusable="False" Click="maximizeButton_Click" HorizontalAlignment="Right" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" Background="#FF2D8CFF" VerticalAlignment="Top" Width="24" Height="21" Margin="0,0,29,0"/>
         <Button x:Name="flipHor" Content="⟳" FontSize="15" Height="24" Margin="394,0,221,10"  VerticalAlignment="Bottom" HorizontalAlignment="Center" Width="25" Click="flipHor_Click">
             <Button.ToolTip>
                 <ToolTip>

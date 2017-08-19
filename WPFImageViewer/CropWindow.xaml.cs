@@ -261,6 +261,25 @@ namespace WPFImageViewer
 
 
         #region Generic events
+        private void maximizeButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (WindowState == WindowState.Maximized)
+            {
+                WindowState = WindowState.Normal;
+            }
+            else if (WindowState == WindowState.Normal)
+            {
+                WindowState = WindowState.Maximized;
+            }
+        }
+
+
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            WindowState = WindowState.Maximized;
+        }
+
+
         private void closeButton_Click(object sender, RoutedEventArgs e)
         {
             this.Close();
