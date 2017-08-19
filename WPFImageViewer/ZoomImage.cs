@@ -90,13 +90,19 @@ namespace WPFImageViewer
         {
             int[] dimensions = new int[2];
 
-            using (var imageStream = File.OpenRead(defaultMedia))
+            try
             {
-                var decoder = BitmapDecoder.Create(imageStream, BitmapCreateOptions.IgnoreColorProfile,
-                    BitmapCacheOption.Default);
-                dimensions[0] = decoder.Frames[0].PixelWidth;
-                dimensions[1] = decoder.Frames[0].PixelHeight;
+                using (var imageStream = File.OpenRead(defaultMedia))
+                {
+                    var decoder = BitmapDecoder.Create(imageStream, BitmapCreateOptions.IgnoreColorProfile, BitmapCacheOption.Default);
+                    dimensions[0] = decoder.Frames[0].PixelWidth;
+                    dimensions[1] = decoder.Frames[0].PixelHeight;
 
+                    return dimensions;
+                }
+            }
+            catch (FileNotFoundException)
+            {
                 return dimensions;
             }
         }
