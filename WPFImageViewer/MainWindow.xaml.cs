@@ -830,6 +830,16 @@ namespace WPFImageViewer
                     seekBar.Value = 0;
                     lblseekerValue.Content = null;
                     lblmediaTimeSpan.Content = null;
+
+                    #region Check same media
+                    //this block is used to check if the same media is being loaded twice in a roll, when that happens the loading animation needs to be stopped bellow because the media opened event won't fire
+                    string previousMedia = null;
+
+                    if (mainMedia.Source != null)
+                    {
+                        previousMedia = mainMedia.Source.LocalPath;
+                    }  
+                    #endregion
                     #endregion
 
                     if (File.Exists(defaultMedia))
@@ -840,7 +850,7 @@ namespace WPFImageViewer
                         mainMedia.Play();
                         isMediaPlaying = true;
 
-                        loading.PlayAnimation();
+                        if (previousMedia != mainMedia.Source.LocalPath) loading.PlayAnimation(); else loading.StopAnimation();//this line is used to check if the same media is being loaded twice in a roll, when that happens the loading animation needs to be stopped here because the media opened event won't fire
                     }
                     else
                     {
