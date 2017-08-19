@@ -37,6 +37,7 @@
                                 <MenuItem Name="orderBDate" Header="Date" Checked="orderBy_Checked" IsCheckable="True"/>
                             </MenuItem>
                             <MenuItem Name="keepRatio" Header="Keep aspect ratio while resizing" PreviewMouseDown="keepRatio_Checked" IsCheckable="True"/>
+                            <MenuItem Header="Delete" PreviewMouseDown="deleteFile_PreviewMouseDown"/>
                         </MenuItem>
                         <MenuItem Header="Save as image..." Click="snapshot_Click"/>
                         <MenuItem Header="Close" Click="closeApp_Click"/>
@@ -74,6 +75,7 @@
                             </MenuItem>
                             <MenuItem Header="Save Image as..." Click="saveImage_Click"/>
                             <MenuItem Name="keepRatio2" Header="Keep aspect ratio while resizing" PreviewMouseDown="keepRatio_Checked" IsCheckable="True"/>
+                            <MenuItem Header="Delete" PreviewMouseDown="deleteFile_PreviewMouseDown"/>
                         </MenuItem>
                         <MenuItem Header="Close" Click="closeApp_Click"/>
                     </ContextMenu>

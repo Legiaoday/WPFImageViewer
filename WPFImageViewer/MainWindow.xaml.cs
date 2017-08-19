@@ -23,6 +23,7 @@ namespace WPFImageViewer
         DispatcherTimer timer;
         List<string> listOfFiles = new List<string>();//holds all the supported media located in the same folder as the current media
         int defaultImageIndex = 0;//used to navigate throught the listOfFiles variable
+        int previousImageIndex = 0;//used to navigate throught the listOfFiles variable
         public string defaultMedia = null;//holds the path of the current media
         bool isMediaPlaying = true;
         short zoomIndex = 0;
@@ -394,6 +395,8 @@ namespace WPFImageViewer
         {
             if (listOfFiles.Count > 1)
             {
+                previousImageIndex = defaultImageIndex;
+
                 if (defaultImageIndex < (listOfFiles.Count - 1))
                 {
                     defaultImageIndex++;
@@ -416,6 +419,8 @@ namespace WPFImageViewer
         {
             if (listOfFiles.Count > 1)
             {
+                previousImageIndex = defaultImageIndex;
+
                 if (defaultImageIndex > 0)
                 {
                     defaultImageIndex--;
@@ -559,6 +564,11 @@ namespace WPFImageViewer
                         deactivateCrop();
                     }
                 }
+            }
+
+            if (e.Key == Key.Delete)
+            {
+                deleteFile();
             }
         }
         #endregion
@@ -1098,7 +1108,7 @@ namespace WPFImageViewer
             {
                 if (listOfFiles[i] == fileName)
                 {
-                    defaultImageIndex = i;
+                    defaultImageIndex = previousImageIndex = i;
                     return;
                 }
             }
@@ -1926,6 +1936,100 @@ namespace WPFImageViewer
         #endregion
 
 
-       
+        #region Delete file
+        private void deleteFile_PreviewMouseDown(object sender, MouseButtonEventArgs e)
+        {
+            deleteFile();
+        }
+
+
+        void deleteFile()
+        {
+            if (MessageBox.Show("Are you sure you want to delete this file?", "Delete?", MessageBoxButton.YesNo, MessageBoxImage.Warning, MessageBoxResult.No) == MessageBoxResult.Yes)
+            {
+                lblFileName.Content = null;
+                fileName = null;
+
+                if (mediaType == MediaType.Video || mediaExtension == MediaExtension.GIF || mediaType == MediaType.Audio)
+                {
+                    this.IsHitTestVisible = false;
+                    navigationGrid.IsHitTestVisible = false;
+                    navigationGridWhite.Visibility = Visibility.Collapsed;
+                    if (isMediaPlaying && mediaType == MediaType.Image) loading.StopAnimation();
+                    TaskbarItemInfo = null;
+                    isMediaPlaying = false;
+                    timer.Stop();
+                    mainMedia.Stop();
+                    mainMedia.Source = null;
+                    mainMedia.Visibility = Visibility.Collapsed;
+
+                    DispatcherTimer deleteTimer = new DispatcherTimer();
+                    deleteTimer.Interval = TimeSpan.FromMilliseconds(100);
+                    deleteTimer.Tick += new EventHandler(deleteTimer_Tick);
+                    deleteTimer.Start();
+                }
+                else
+                {
+                    if (mainImage.Source != null) mainImage.Source = null;
+                    seekBar.Value = 0;
+                    lblseekerValue.Content = null;
+                    lblmediaTimeSpan.Content = null;
+
+                    File.Delete(defaultMedia);
+                    removeFromList();
+                }
+            }
+        }
+
+
+        void removeFromList ()
+        {
+            if (defaultImageIndex < previousImageIndex)
+            {
+                previousImageIndex--;
+                listOfFiles.RemoveAt(defaultImageIndex);
+            }
+            else if (defaultImageIndex == previousImageIndex)
+            {
+                listOfFiles.RemoveAt(defaultImageIndex);
+                if (previousImageIndex > 0) previousImageIndex--;
+            }
+            else
+            {
+                listOfFiles.RemoveAt(defaultImageIndex);
+            }
+
+            if (listOfFiles.Count > 0)
+            {
+                defaultImageIndex = previousImageIndex;
+
+                defaultMedia = System.IO.Path.GetDirectoryName(defaultMedia) + "\\" + listOfFiles[defaultImageIndex];
+                setMainMedia();
+            }
+            else
+            {
+                defaultMedia = null;
+                this.Title = "WPFImageViewer";
+            }
+        }
+
+
+        void deleteTimer_Tick(object sender, EventArgs e)
+        {
+            DispatcherTimer tempT = sender as DispatcherTimer;
+            tempT.Stop();
+
+            try
+            {
+                File.Delete(defaultMedia);
+                this.IsHitTestVisible = true;
+                removeFromList();
+            }
+            catch (IOException)
+            {
+                tempT.Start();
+            }
+        } 
+        #endregion
     }
 }
