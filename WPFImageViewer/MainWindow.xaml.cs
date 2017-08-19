@@ -1955,7 +1955,14 @@ namespace WPFImageViewer
 
         void deleteFile()
         {
-            if (MessageBox.Show("Are you sure you want to delete this file?", "Delete?", MessageBoxButton.YesNo, MessageBoxImage.Warning, MessageBoxResult.No) == MessageBoxResult.Yes)
+            if (isMediaPlaying)
+            {
+                mainMedia.Pause();
+                isMediaPlaying = false;
+                taskBarMedia.ProgressState = TaskbarItemProgressState.Paused;
+            }
+
+            if (MessageBox.Show("Are you sure you want to delete \"" + listOfFiles[defaultImageIndex] + "\"?", "Delete?", MessageBoxButton.YesNo, MessageBoxImage.Warning, MessageBoxResult.No) == MessageBoxResult.Yes)
             {
                 lblFileName.Content = null;
                 fileName = null;
@@ -1986,6 +1993,7 @@ namespace WPFImageViewer
                     lblmediaTimeSpan.Content = null;
 
                     File.Delete(defaultMedia);
+                    //FileSystem.DeleteFile(defaultMedia, 0, RecycleOption.SendToRecycleBin);
                     removeFromList();
                 }
             }
@@ -2032,6 +2040,7 @@ namespace WPFImageViewer
             try
             {
                 File.Delete(defaultMedia);
+                //FileSystem.DeleteFile(defaultMedia, UIOption.AllDialogs, RecycleOption.SendToRecycleBin);
                 this.IsHitTestVisible = true;
                 removeFromList();
             }
