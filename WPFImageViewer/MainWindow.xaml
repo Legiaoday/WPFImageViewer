@@ -12,7 +12,7 @@
         <SolidColorBrush Opacity="0.9" Color="#FF171717"/>
     </Window.Background>
     <Grid x:Name="mainGrid" Margin="0,0,0,0">
-        <Grid x:Name="mainMediaGrid" Background="Transparent" SizeChanged="mainMediaGrid_SizeChanged">
+        <Grid x:Name="mainMediaGrid" Background="Transparent" SizeChanged="mainMediaGrid_SizeChanged" MouseDown="mainGrid_MouseDown" MouseMove="mainGrid_MouseMove">
             <Grid.ContextMenu>
                 <ContextMenu x:Name="mediaGridContextMenu">
                     <MenuItem Header="Open Media" Click="openMedia_Click"/>

@@ -77,7 +77,7 @@ namespace WPFImageViewer
 
 
         #region ConvertClick
-        private static Point ConvertClick(int bmpWidth, int bmpHeight, Point clickOverMedia, double mainImageWidth, double mainImageHeight)
+        public static Point ConvertClick(int bmpWidth, int bmpHeight, Point clickOverMedia, double mainImageWidth, double mainImageHeight)
         {
             Point newClick = new Point();
 

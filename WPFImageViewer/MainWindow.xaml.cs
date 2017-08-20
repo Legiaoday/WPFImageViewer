@@ -13,6 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using System.Windows.Shell;
 using System.Windows.Threading;
+using System.Globalization;
 #endregion
 
 namespace WPFImageViewer
@@ -1292,6 +1293,7 @@ namespace WPFImageViewer
 
         private void deactivateCrop()
         {
+            mainGrid.Children.Remove(coordLbl);
             cleanCanvas();
             mainImage.ReleaseMouseCapture();
             isCropEnabled = false;
@@ -2048,7 +2050,194 @@ namespace WPFImageViewer
             {
                 tempT.Start();
             }
-        } 
+        }
+        #endregion
+
+
+        #region Crop size
+        Label coordLbl;
+        Point lblPoint;
+        int[] originalSize = new int[] { 0, 0 };
+        Point origRec;
+        Point outBoundP;
+        Point tempRec;
+        FormattedText formattedText;
+
+        private void createCoordinatesLabel(MouseButtonEventArgs e)
+        {
+            System.Drawing.Bitmap bmpOriginal = new System.Drawing.Bitmap(defaultMedia);
+            originalSize[0] = bmpOriginal.Width;
+            originalSize[1] = bmpOriginal.Height;
+            bmpOriginal.Dispose();
+
+            mainGrid.Children.Remove(coordLbl);
+            Point p = e.GetPosition(mainGrid);
+
+            coordLbl = new Label();
+            coordLbl.IsHitTestVisible = false;
+            coordLbl.Height = Double.NaN;
+            coordLbl.Width = Double.NaN;
+            coordLbl.Content = "";
+            coordLbl.FontSize = 12;
+            coordLbl.FontFamily = new FontFamily("Arial");
+            var converter = new BrushConverter();
+            var brush = (Brush)converter.ConvertFromString("#FF1069D3");
+            brush.Opacity = 0.8;
+            coordLbl.Background = brush;
+            coordLbl.HorizontalAlignment = HorizontalAlignment.Left;
+            coordLbl.VerticalAlignment = VerticalAlignment.Top;
+            coordLbl.Margin = new Thickness(p.X, p.Y, 0, 0);
+
+            mainGrid.Children.Add(coordLbl);
+        }
+
+
+        private void mainGrid_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            if (isCropEnabled)
+            {
+                if (e.LeftButton == MouseButtonState.Pressed)
+                {
+                    createCoordinatesLabel(e);
+                }
+            }
+        }
+
+
+        private void mainGrid_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (isCropEnabled)
+            {
+                if (e.LeftButton == MouseButtonState.Pressed)
+                {
+                    lblPoint = e.GetPosition(mainGrid);
+                    outBoundP = new Point(lblPoint.X, lblPoint.Y);
+
+                    formattedText = new FormattedText(coordLbl.Content.ToString(), CultureInfo.CurrentCulture, FlowDirection.LeftToRight, new Typeface("Arial"), 12, Brushes.Black);//used for the autosize label
+                    coordLbl.Width = formattedText.Width + 20;
+
+                    //Prevents the label from going outbounds
+                    if (clickDown.X > currentPos.X && clickDown.Y > currentPos.Y)//put the label on the top left
+                    {
+                        outBoundP.X = outBoundP.X - coordLbl.ActualWidth;
+                        outBoundP.Y = outBoundP.Y - coordLbl.ActualHeight;
+
+                        if ((lblPoint.X - coordLbl.ActualWidth) < 0)
+                        {
+                            outBoundP.X = 0;
+                        }
+
+                        if ((lblPoint.Y - coordLbl.ActualHeight) < 0)
+                        {
+                            outBoundP.Y = 0;
+                        }
+                    }
+                    else if (clickDown.X > currentPos.X && clickDown.Y < currentPos.Y)//puts the label on the bottom left
+                    {
+                        outBoundP.X = outBoundP.X - coordLbl.ActualWidth;
+
+                        if ((lblPoint.X - coordLbl.ActualWidth) < 0)
+                        {
+                            outBoundP.X = 0;
+                        }
+
+                        if ((lblPoint.Y + coordLbl.ActualHeight) > mainGrid.ActualHeight)
+                        {
+                            outBoundP.Y = mainGrid.ActualHeight - coordLbl.ActualHeight;
+                        }
+                    }
+                    else if (clickDown.X < currentPos.X && clickDown.Y > currentPos.Y)//puts the label on the top right
+                    {
+                        outBoundP.Y = outBoundP.Y - coordLbl.ActualHeight;
+
+                        if ((lblPoint.X + coordLbl.ActualWidth) > mainGrid.ActualWidth)
+                        {
+                            outBoundP.X = mainGrid.ActualWidth - coordLbl.ActualWidth;
+                        }
+
+                        if ((lblPoint.Y - coordLbl.ActualHeight) < 0)
+                        {
+                            outBoundP.Y = 0;
+                        }
+                    }
+                    else//the default bottom right postion, only outbounds checks are performed 
+                    {
+                        if ((lblPoint.X + coordLbl.ActualWidth) > mainGrid.ActualWidth)
+                        {
+                            outBoundP.X = mainGrid.ActualWidth - coordLbl.ActualWidth;
+                        }
+
+                        if ((lblPoint.Y + coordLbl.ActualHeight) > mainGrid.ActualHeight)
+                        {
+                            outBoundP.Y = mainGrid.ActualHeight - coordLbl.ActualHeight;
+                        }
+                    }
+
+                    coordLbl.Margin = new Thickness(outBoundP.X, outBoundP.Y, 0, 0);
+                    updateLabelCont();
+                }
+            }
+        }
+
+
+        private void updateLabelCont()
+        {
+            tempRec = new Point(rectangle.Width, rectangle.Height);
+
+            if (clickDown.X < 0)
+            {
+                tempRec.X = tempRec.X + clickDown.X;
+
+                if (tempRec.X > mainImage.ActualWidth) tempRec.X = mainImage.ActualWidth; else if (tempRec.X < 0) tempRec.X = 0;
+            }
+            else if (clickDown.X > mainImage.ActualWidth)
+            {
+                tempRec.X = tempRec.X - (clickDown.X - mainImage.ActualWidth);
+
+                if (tempRec.X > mainImage.ActualWidth) tempRec.X = mainImage.ActualWidth;
+            }
+            else
+            {
+                if (currentPos.X < 0)
+                {
+                    tempRec.X = tempRec.X + currentPos.X;
+                }
+                else if (currentPos.X > mainImage.ActualWidth)
+                {
+                    tempRec.X = tempRec.X - (currentPos.X - mainImage.ActualWidth);
+                }
+            }
+
+
+            if (clickDown.Y < 0)
+            {
+                tempRec.Y = tempRec.Y + clickDown.Y;
+
+                if (tempRec.Y > mainImage.ActualHeight) tempRec.Y = mainImage.ActualHeight; else if (tempRec.Y < 0) tempRec.Y = 0;
+            }
+            else if (clickDown.Y > mainImage.ActualHeight)
+            {
+                tempRec.Y = tempRec.Y - (clickDown.Y - mainImage.ActualHeight);
+
+                if (tempRec.Y > mainImage.ActualHeight) tempRec.Y = mainImage.ActualHeight;
+            }
+            else
+            {
+                if (currentPos.Y < 0)
+                {
+                    tempRec.Y = tempRec.Y + currentPos.Y;
+                }
+                else if (currentPos.Y > mainImage.ActualHeight)
+                {
+                    tempRec.Y = tempRec.Y - (currentPos.Y - mainImage.ActualHeight);
+                }
+            }
+
+
+
+            origRec = CropImage.ConvertClick(originalSize[0], originalSize[1], tempRec, mainImage.ActualWidth, mainImage.ActualHeight);
+            coordLbl.Content = "X: " + Convert.ToInt32(origRec.X) + " Y: " + Convert.ToInt32(origRec.Y);
+        }
         #endregion
     }
 }
