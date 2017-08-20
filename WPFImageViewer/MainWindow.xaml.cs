@@ -2054,7 +2054,7 @@ namespace WPFImageViewer
         #endregion
 
 
-        #region Crop size
+        #region Crop size label
         Label coordLbl;
         Point lblPoint;
         int[] originalSize = new int[] { 0, 0 };
