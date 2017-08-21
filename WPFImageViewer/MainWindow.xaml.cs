@@ -733,6 +733,7 @@ namespace WPFImageViewer
                 isCropEnabled = true;
                 mainImage.Cursor = Cursors.Cross;
                 hideControlsZoom();
+                createOutboundCoordLabel();
             }
         }
 
@@ -2092,6 +2093,18 @@ namespace WPFImageViewer
         }
 
 
+        private void createOutboundCoordLabel ()//this is a temporary method just to fool the mainGrid_MouseMove event when the user click ouside the mainwindow, otherwise an exception will be thrown
+        {
+            mainGrid.Children.Remove(coordLbl);
+
+            coordLbl = new Label();
+            coordLbl.Visibility = Visibility.Collapsed;
+            coordLbl.Height = 0;
+            coordLbl.Width = 0;
+            coordLbl.Content = "";
+        }
+
+
         private void mainGrid_MouseDown(object sender, MouseButtonEventArgs e)
         {
             if (isCropEnabled)
@@ -2117,7 +2130,7 @@ namespace WPFImageViewer
                     coordLbl.Width = formattedText.Width + 20;
 
                     //Prevents the label from going outbounds
-                    if (clickDown.X > currentPos.X && clickDown.Y > currentPos.Y)//put the label on the top left
+                    if (clickDown.X >= currentPos.X && clickDown.Y > currentPos.Y)//put the label on the top left
                     {
                         outBoundP.X = outBoundP.X - coordLbl.ActualWidth;
                         outBoundP.Y = outBoundP.Y - coordLbl.ActualHeight;
@@ -2132,7 +2145,7 @@ namespace WPFImageViewer
                             outBoundP.Y = 0;
                         }
                     }
-                    else if (clickDown.X > currentPos.X && clickDown.Y < currentPos.Y)//puts the label on the bottom left
+                    else if (clickDown.X > currentPos.X && clickDown.Y <= currentPos.Y)//puts the label on the bottom left
                     {
                         outBoundP.X = outBoundP.X - coordLbl.ActualWidth;
 
@@ -2172,6 +2185,25 @@ namespace WPFImageViewer
                             outBoundP.Y = mainGrid.ActualHeight - coordLbl.ActualHeight;
                         }
                     }
+
+                    //checks if the initial click was outbounds
+                    //if (lblPoint.X < 0)
+                    //{
+                    //    outBoundP.X = 0;
+                    //}
+                    //else if (lblPoint.X > mainGrid.ActualWidth)
+                    //{
+                    //    outBoundP.X = mainGrid.ActualWidth - coordLbl.ActualWidth;
+                    //}
+
+                    //if (lblPoint.Y < 0)
+                    //{
+                    //    outBoundP.Y = 0;
+                    //}
+                    //else if (lblPoint.Y > mainGrid.ActualHeight)
+                    //{
+                    //    outBoundP.Y = mainGrid.ActualHeight - coordLbl.ActualHeight;
+                    //}
 
                     coordLbl.Margin = new Thickness(outBoundP.X, outBoundP.Y, 0, 0);
                     updateLabelCont();
@@ -2233,10 +2265,20 @@ namespace WPFImageViewer
                 }
             }
 
-
-
             origRec = CropImage.ConvertClick(originalSize[0], originalSize[1], tempRec, mainImage.ActualWidth, mainImage.ActualHeight);
-            coordLbl.Content = "X: " + Convert.ToInt32(origRec.X) + " Y: " + Convert.ToInt32(origRec.Y);
+
+            //checks if the initial click was outbounds and sets the label to zero instead of negative numbers
+            if (clickDown.X > mainImage.ActualWidth && currentPos.X > mainImage.ActualWidth)
+            {
+                origRec.X = 0;
+            }
+
+            if (clickDown.Y > mainImage.ActualHeight && currentPos.Y > mainImage.ActualHeight)
+            {
+                origRec.Y = 0;
+            }
+
+            coordLbl.Content = "W: " + Convert.ToInt32(origRec.X) + " H: " + Convert.ToInt32(origRec.Y);
         }
         #endregion
     }
