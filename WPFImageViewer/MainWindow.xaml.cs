@@ -2272,8 +2272,16 @@ namespace WPFImageViewer
             {
                 origRec.X = 0;
             }
+            else if (clickDown.X < 0 && currentPos.X < 0)
+            {
+                origRec.X = 0;
+            }
 
             if (clickDown.Y > mainImage.ActualHeight && currentPos.Y > mainImage.ActualHeight)
+            {
+                origRec.Y = 0;
+            }
+            else if (clickDown.Y < 0 && currentPos.Y < 0)
             {
                 origRec.Y = 0;
             }
