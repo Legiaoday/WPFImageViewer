@@ -34,6 +34,7 @@ namespace WPFImageViewer
                 widthTxt.Text = Convert.ToUInt32(bitmapImage.Width).ToString();
                 heightTxt.Text = Convert.ToUInt32(bitmapImage.Height).ToString();
                 getOriginalClick();
+                updateCropBkp();
             }
             else
             {
@@ -311,6 +312,10 @@ namespace WPFImageViewer
 
 
         #region Resize crop
+        int[] bkpWidthHeight;
+        int[] bkpXY;
+
+
         private void adjustWH_Click(object sender, RoutedEventArgs e)
         {
             doResizeWH();
@@ -337,6 +342,10 @@ namespace WPFImageViewer
 
                         widthTxt.Text = Convert.ToUInt32(tempBmp.Width).ToString();
                         heightTxt.Text = Convert.ToUInt32(tempBmp.Height).ToString();
+                        XTxt.Text = newXY[0].ToString();
+                        YTxt.Text = newXY[1].ToString();
+                        updateCropBkp();
+                        return;
                     }
                     else
                     {
@@ -352,6 +361,25 @@ namespace WPFImageViewer
             {
                 System.Windows.MessageBox.Show("Width and Height must be greater than zero!", "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
             }
+
+            restoreCropBkp();
+        }
+
+
+        void restoreCropBkp ()
+        {
+            widthTxt.Text = bkpWidthHeight[0].ToString();
+            heightTxt.Text = bkpWidthHeight[1].ToString();
+
+            XTxt.Text = bkpXY[0].ToString();
+            YTxt.Text = bkpXY[1].ToString();
+        }
+
+
+        void updateCropBkp ()
+        {
+            bkpWidthHeight = new int[] { Int32.Parse(widthTxt.Text), Int32.Parse(heightTxt.Text) };
+            bkpXY = new int[] { Int32.Parse(XTxt.Text), Int32.Parse(YTxt.Text) };
         }
 
 
@@ -384,7 +412,6 @@ namespace WPFImageViewer
                 e.Handled = true;
             }
         }
-        #endregion
 
 
         private void getOriginalClick()
@@ -446,4 +473,5 @@ namespace WPFImageViewer
             }
         }
     }
+    #endregion
 }
