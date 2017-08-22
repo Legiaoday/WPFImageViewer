@@ -41,6 +41,6 @@
         <TextBox Name="heightTxt" HorizontalAlignment="Left" TextWrapping="NoWrap" VerticalAlignment="Bottom" FontSize="10" Margin="77,9,0,12" Text="999999" Width="43" PreviewTextInput="widthTxt_PreviewTextInput" PreviewKeyDown="widthTxt_PreviewKeyDown" CommandManager.PreviewExecuted="widthTxt_PreviewExecuted"/>
         <Label Content="W:" FontSize="10" HorizontalAlignment="Left" Margin="0,7,0,10" VerticalAlignment="Bottom" Width="23"/>
         <Label Content="H:" FontSize="10" HorizontalAlignment="Left" Margin="61,7,0,10" VerticalAlignment="Bottom" Width="23"/>
-        <Button x:Name="button" Content="Adjust crop" FontSize="10" HorizontalAlignment="Left" VerticalAlignment="Bottom" Click="button_Click" Margin="128,0,0,11" Width="63"/>
+        <Button x:Name="button" Content="Adjust W/H" FontSize="10" HorizontalAlignment="Left" VerticalAlignment="Bottom" Click="button_Click" Margin="128,0,0,11" Width="63"/>
     </Grid>
 </Window>
