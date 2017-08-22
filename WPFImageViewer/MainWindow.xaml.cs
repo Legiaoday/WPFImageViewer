@@ -73,6 +73,7 @@ namespace WPFImageViewer
         enum MediaExtension { JPEG, PNG, GIF, MP4, WEBM, MKV, AVI, MP3, WAV, WMV }
         MediaType mediaType;
         MediaExtension mediaExtension;
+        public int[] originalXY;
         #endregion
 
 
@@ -349,7 +350,7 @@ namespace WPFImageViewer
                     if (rectangle.Width > 0 && rectangle.Height > 0 && !Double.IsNaN(rectangle.Width) && !Double.IsNaN(rectangle.Height))
                     {
                         clickRelease = e.GetPosition(mainImage);
-                        CropWindow cropWindow = new CropWindow(this, CropImage.GetCrop(mainImage, clickDown, clickRelease, defaultMedia));
+                        CropWindow cropWindow = new CropWindow(this, CropImage.GetCrop(mainImage, clickDown, clickRelease, defaultMedia, ref originalXY));
                         try
                         {
                             cropWindow.ShowDialog();
@@ -2078,7 +2079,7 @@ namespace WPFImageViewer
             coordLbl.IsHitTestVisible = false;
             coordLbl.Height = Double.NaN;
             coordLbl.Width = Double.NaN;
-            coordLbl.Content = "";
+            coordLbl.Content = "W: 0 H: 0";
             coordLbl.FontSize = 12;
             coordLbl.FontFamily = new FontFamily("Arial");
             var converter = new BrushConverter();

@@ -33,6 +33,7 @@ namespace WPFImageViewer
 
                 widthTxt.Text = Convert.ToUInt32(bitmapImage.Width).ToString();
                 heightTxt.Text = Convert.ToUInt32(bitmapImage.Height).ToString();
+                getOriginalClick();
             }
             else
             {
@@ -310,33 +311,41 @@ namespace WPFImageViewer
 
 
         #region Resize crop
-        private void button_Click(object sender, RoutedEventArgs e)
+        private void adjustWH_Click(object sender, RoutedEventArgs e)
         {
-            doResize();
+            doResizeWH();
         }
 
 
-        private void doResize()
+        private void doResizeWH()
         {
-            if (double.Parse(widthTxt.Text) > 0 && double.Parse(heightTxt.Text) > 0)
+            if (widthTxt.Text != "" && heightTxt.Text != "" && double.Parse(widthTxt.Text) > 0 && double.Parse(heightTxt.Text) > 0)
             {
-                if (File.Exists(globalMainWindow.defaultMedia))
+                if (XTxt.Text != "" && YTxt.Text != "" && double.Parse(XTxt.Text) >= 0 && double.Parse(YTxt.Text) >= 0 && double.Parse(XTxt.Text) < globalMainWindow.originalXY[0] && double.Parse(YTxt.Text) < globalMainWindow.originalXY[1])
                 {
-                    double[] newSize = new double[] { double.Parse(widthTxt.Text), double.Parse(heightTxt.Text) };
-                    BitmapImage tempBmp = CropImage.ResizeCrop(globalMainWindow.mainImage, globalMainWindow.clickDown, globalMainWindow.clickRelease, globalMainWindow.defaultMedia, newSize);
-                    croppedImage.Source = tempBmp;
+                    if (File.Exists(globalMainWindow.defaultMedia))
+                    {
+                        double[] newSize = new double[] { double.Parse(widthTxt.Text), double.Parse(heightTxt.Text) };
+                        double[] newXY = new double[] { double.Parse(XTxt.Text), double.Parse(YTxt.Text) };
+                        BitmapImage tempBmp = CropImage.ResizeCropPlus(globalMainWindow.mainImage, globalMainWindow.clickDown, globalMainWindow.clickRelease, globalMainWindow.defaultMedia, newSize, newXY);
+                        croppedImage.Source = tempBmp;
 
-                    tbOriginal = new TransformedBitmap();
-                    tbOriginal.BeginInit();
-                    tbOriginal.Source = tempBmp;
-                    tbOriginal.EndInit();
+                        tbOriginal = new TransformedBitmap();
+                        tbOriginal.BeginInit();
+                        tbOriginal.Source = tempBmp;
+                        tbOriginal.EndInit();
 
-                    widthTxt.Text = Convert.ToUInt32(tempBmp.Width).ToString();
-                    heightTxt.Text = Convert.ToUInt32(tempBmp.Height).ToString();
+                        widthTxt.Text = Convert.ToUInt32(tempBmp.Width).ToString();
+                        heightTxt.Text = Convert.ToUInt32(tempBmp.Height).ToString();
+                    }
+                    else
+                    {
+                        System.Windows.MessageBox.Show("File does not exist!", "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
                 }
                 else
                 {
-                    System.Windows.MessageBox.Show("File does not exist!", "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
+                    System.Windows.MessageBox.Show("X and Y must be equal or greater than zero and lesser than the original image dimensions!\n\nOriginal dimensions:\nWidth = " + globalMainWindow.originalXY[0] + "\nHeight = " + globalMainWindow.originalXY[1], "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
             else
@@ -368,13 +377,73 @@ namespace WPFImageViewer
         {
             if (e.Key == Key.Enter)
             {
-                doResize();
+                doResizeWH();
             }
             else if (e.Key == Key.Space)
             {
                 e.Handled = true;
             }
-        } 
+        }
         #endregion
+
+
+        private void getOriginalClick()
+        {
+            System.Windows.Point startRec = new System.Windows.Point(Math.Min(globalMainWindow.clickDown.X, globalMainWindow.clickRelease.X), Math.Min(globalMainWindow.clickDown.Y, globalMainWindow.clickRelease.Y));
+            startRec = CropImage.ConvertClick(globalMainWindow.originalXY[0], globalMainWindow.originalXY[1], startRec, globalMainWindow.mainImage.ActualWidth, globalMainWindow.mainImage.ActualHeight);
+
+
+            #region Correct outbounds rectangle
+            if (startRec.X < 0)//checks if the rectangle is outbounds and corrects it
+            {
+                startRec.X = 0;
+            }
+
+            if (startRec.Y < 0)//checks if the rectangle is outbounds and corrects it
+            {
+                startRec.Y = 0;
+            }
+            #endregion
+
+            XTxt.Text = Convert.ToUInt32(startRec.X).ToString();
+            YTxt.Text = Convert.ToUInt32(startRec.Y).ToString();
+        }
+
+
+        private void adjustXY_Click(object sender, RoutedEventArgs e)
+        {
+            doResizeWH();
+        }
+
+
+        private void XTxt_PreviewTextInput(object sender, TextCompositionEventArgs e)
+        {
+            if (!char.IsDigit(e.Text, e.Text.Length - 1))
+            {
+                e.Handled = true;
+            }
+        }
+
+
+        private void XTxt_PreviewKeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                doResizeWH();
+            }
+            else if (e.Key == Key.Space)
+            {
+                e.Handled = true;
+            }
+        }
+
+
+        private void XTxt_PreviewExecuted(object sender, ExecutedRoutedEventArgs e)
+        {
+            if (e.Command == ApplicationCommands.Paste)
+            {
+                e.Handled = true;
+            }
+        }
     }
 }

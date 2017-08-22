@@ -41,6 +41,11 @@
         <TextBox Name="heightTxt" HorizontalAlignment="Left" TextWrapping="NoWrap" VerticalAlignment="Bottom" FontSize="10" Margin="77,9,0,12" Text="999999" Width="43" PreviewTextInput="widthTxt_PreviewTextInput" PreviewKeyDown="widthTxt_PreviewKeyDown" CommandManager.PreviewExecuted="widthTxt_PreviewExecuted"/>
         <Label Content="W:" FontSize="10" HorizontalAlignment="Left" Margin="0,7,0,10" VerticalAlignment="Bottom" Width="23"/>
         <Label Content="H:" FontSize="10" HorizontalAlignment="Left" Margin="61,7,0,10" VerticalAlignment="Bottom" Width="23"/>
-        <Button x:Name="button" Content="Adjust W/H" FontSize="10" HorizontalAlignment="Left" VerticalAlignment="Bottom" Click="button_Click" Margin="128,0,0,11" Width="63"/>
+        <Button x:Name="adjustWH" Content="Adjust W/H" FontSize="10" HorizontalAlignment="Left" VerticalAlignment="Bottom" Click="adjustWH_Click" Margin="128,0,0,11" Width="63"/>
+        <TextBox Name="XTxt" HorizontalAlignment="Right" TextWrapping="NoWrap" FontSize="10" Margin="0,9,140,12" Text="999999" Width="43" PreviewTextInput="XTxt_PreviewTextInput" VerticalAlignment="Bottom" PreviewKeyDown="XTxt_PreviewKeyDown" CommandManager.PreviewExecuted="XTxt_PreviewExecuted"/>
+        <TextBox Name="YTxt" HorizontalAlignment="Right" TextWrapping="NoWrap" FontSize="10" Margin="0,9,81,12" Text="999999" Width="43" PreviewTextInput="XTxt_PreviewTextInput" VerticalAlignment="Bottom" PreviewKeyDown="XTxt_PreviewKeyDown" CommandManager.PreviewExecuted="XTxt_PreviewExecuted"/>
+        <Label Content="X:" FontSize="10" Margin="0,7,178,10" HorizontalAlignment="Right" Width="23" VerticalAlignment="Bottom"/>
+        <Label Content="Y:" FontSize="10" Margin="0,7,117,10" HorizontalAlignment="Right" Width="23" VerticalAlignment="Bottom"/>
+        <Button Name="adjustXY" Content="Adjust X/Y" FontSize="10" HorizontalAlignment="Right" Click="adjustXY_Click" Margin="0,0,10,11" Width="63" VerticalAlignment="Bottom"/>
     </Grid>
 </Window>
