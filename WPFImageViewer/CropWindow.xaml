@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WPFImageViewer"
         mc:Ignorable="d"
-        Title="Cropped Image"  Icon="multimedia.ico" Height="360" Width="640" WindowStyle="None"  AllowsTransparency="True" Loaded="Window_Loaded" WindowStartupLocation="CenterScreen" ResizeMode="NoResize" KeyDown="Window_KeyDown">
+        Title="Cropped Image"  Icon="multimedia.ico" Height="360" Width="640" WindowStyle="None" AllowsTransparency="True" Loaded="Window_Loaded" WindowStartupLocation="CenterScreen" ResizeMode="NoResize" KeyDown="Window_KeyDown">
     <Window.Background>
         <SolidColorBrush Opacity="0.8" Color="#FF1069D3"/>
     </Window.Background>
@@ -37,5 +37,10 @@
                 </ToolTip>
             </Button.ToolTip>
         </Button>
+        <TextBox Name="widthTxt" HorizontalAlignment="Left" TextWrapping="NoWrap" VerticalAlignment="Bottom" FontSize="10" Margin="18,9,0,12" Text="999999" Width="43" PreviewTextInput="widthTxt_PreviewTextInput" PreviewKeyDown="widthTxt_PreviewKeyDown" CommandManager.PreviewExecuted="widthTxt_PreviewExecuted"/>
+        <TextBox Name="heightTxt" HorizontalAlignment="Left" TextWrapping="NoWrap" VerticalAlignment="Bottom" FontSize="10" Margin="77,9,0,12" Text="999999" Width="43" PreviewTextInput="widthTxt_PreviewTextInput" PreviewKeyDown="widthTxt_PreviewKeyDown" CommandManager.PreviewExecuted="widthTxt_PreviewExecuted"/>
+        <Label Content="W:" FontSize="10" HorizontalAlignment="Left" Margin="0,7,0,10" VerticalAlignment="Bottom" Width="23"/>
+        <Label Content="H:" FontSize="10" HorizontalAlignment="Left" Margin="61,7,0,10" VerticalAlignment="Bottom" Width="23"/>
+        <Button x:Name="button" Content="Adjust crop" FontSize="10" HorizontalAlignment="Left" VerticalAlignment="Bottom" Click="button_Click" Margin="128,0,0,11" Width="63"/>
     </Grid>
 </Window>

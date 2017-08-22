@@ -73,6 +73,63 @@ namespace WPFImageViewer
 
             return null;
         }
+
+
+        public static BitmapImage ResizeCrop(Image mainImage, Point clickDown, Point clickRelease, string defaultMedia, double[] newSize)
+        {
+            System.Drawing.Bitmap bmpOriginal = new System.Drawing.Bitmap(defaultMedia);
+            Point startRec = new Point(Math.Min(clickDown.X, clickRelease.X), Math.Min(clickDown.Y, clickRelease.Y));
+            startRec = ConvertClick(bmpOriginal.Width, bmpOriginal.Height, startRec, mainImage.ActualWidth, mainImage.ActualHeight);
+
+            #region Correct outbounds rectangle
+            if (startRec.X < 0)//checks if the rectangle is outbounds and corrects it
+            {
+                newSize[0] += startRec.X;
+                startRec.X = 0;
+            }
+
+            if (startRec.X + newSize[0] > bmpOriginal.Width)//checks if the rectangle is outbounds and corrects it
+            {
+                newSize[0] = bmpOriginal.Width - startRec.X;
+            }
+
+            if (startRec.Y < 0)//checks if the rectangle is outbounds and corrects it
+            {
+                newSize[1] += startRec.Y;
+                startRec.Y = 0;
+            }
+
+            if (startRec.Y + newSize[1] > bmpOriginal.Height)//checks if the rectangle is outbounds and corrects it
+            {
+                newSize[1] = bmpOriginal.Height - startRec.Y;
+            }
+            #endregion
+
+
+            System.Drawing.Rectangle rect = new System.Drawing.Rectangle(Convert.ToInt32(startRec.X), Convert.ToInt32(startRec.Y), Convert.ToInt32(newSize[0]), Convert.ToInt32(newSize[1]));
+
+            System.Drawing.Bitmap bmpCrop = new System.Drawing.Bitmap(rect.Width, rect.Height);
+            System.Drawing.Graphics gCrop = System.Drawing.Graphics.FromImage(bmpCrop);
+            System.Drawing.Rectangle dstRect = new System.Drawing.Rectangle(0, 0, rect.Width, rect.Height);
+            gCrop.DrawImage(bmpOriginal, dstRect, rect, System.Drawing.GraphicsUnit.Pixel);
+
+            using (MemoryStream memory = new MemoryStream())
+            {
+                bmpCrop.Save(memory, System.Drawing.Imaging.ImageFormat.Png);
+                memory.Position = 0;
+                BitmapImage bitmapImage = new BitmapImage();
+                bitmapImage.BeginInit();
+                bitmapImage.CacheOption = BitmapCacheOption.OnLoad;
+                bitmapImage.StreamSource = memory;
+                bitmapImage.EndInit();
+
+                gCrop.Dispose();
+                bmpCrop.Dispose();
+                bmpOriginal.Dispose();
+
+                return bitmapImage;
+            }
+        }
         #endregion
 
 

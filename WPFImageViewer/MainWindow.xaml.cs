@@ -34,8 +34,8 @@ namespace WPFImageViewer
         XMLSettings settings = new XMLSettings();
         bool isCropEnabled = false;
         Rectangle rectangle = new Rectangle();
-        Point clickDown;//Left mouse click down
-        Point clickRelease;//Left mouse click release
+        public Point clickDown;//Left mouse click down
+        public Point clickRelease;//Left mouse click release
         Point currentPos;//current mouse position
         CancellationTokenSource tokenSourceTitle = new CancellationTokenSource();
         CancellationTokenSource tokenSourceNavigation = new CancellationTokenSource();

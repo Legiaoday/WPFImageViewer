@@ -7,6 +7,7 @@ using System.IO;
 using System.Windows.Media;
 using System.Drawing;
 using System.Runtime.InteropServices;
+using System.Windows.Input;
 
 namespace WPFImageViewer
 {
@@ -28,7 +29,10 @@ namespace WPFImageViewer
                 tbOriginal = new TransformedBitmap();
                 tbOriginal.BeginInit();
                 tbOriginal.Source = bitmapImage;
-                tbOriginal.EndInit(); 
+                tbOriginal.EndInit();
+
+                widthTxt.Text = Convert.ToUInt32(bitmapImage.Width).ToString();
+                heightTxt.Text = Convert.ToUInt32(bitmapImage.Height).ToString();
             }
             else
             {
@@ -276,6 +280,15 @@ namespace WPFImageViewer
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
+            if (SystemParameters.PrimaryScreenWidth / 2 > 640 && SystemParameters.PrimaryScreenHeight / 2 > 360)
+            {
+                Width = SystemParameters.PrimaryScreenWidth / 2;
+                Height = SystemParameters.PrimaryScreenHeight / 2;
+            }
+
+            Left = (SystemParameters.PrimaryScreenWidth / 2) - (Width / 2);
+            Top = (SystemParameters.PrimaryScreenHeight / 2) - (Height / 2);
+
             WindowState = WindowState.Maximized;
         }
 
@@ -293,6 +306,75 @@ namespace WPFImageViewer
                 Close();
             }
         }
+        #endregion
+
+
+        #region Resize crop
+        private void button_Click(object sender, RoutedEventArgs e)
+        {
+            doResize();
+        }
+
+
+        private void doResize()
+        {
+            if (double.Parse(widthTxt.Text) > 0 && double.Parse(heightTxt.Text) > 0)
+            {
+                if (File.Exists(globalMainWindow.defaultMedia))
+                {
+                    double[] newSize = new double[] { double.Parse(widthTxt.Text), double.Parse(heightTxt.Text) };
+                    BitmapImage tempBmp = CropImage.ResizeCrop(globalMainWindow.mainImage, globalMainWindow.clickDown, globalMainWindow.clickRelease, globalMainWindow.defaultMedia, newSize);
+                    croppedImage.Source = tempBmp;
+
+                    tbOriginal = new TransformedBitmap();
+                    tbOriginal.BeginInit();
+                    tbOriginal.Source = tempBmp;
+                    tbOriginal.EndInit();
+
+                    widthTxt.Text = Convert.ToUInt32(tempBmp.Width).ToString();
+                    heightTxt.Text = Convert.ToUInt32(tempBmp.Height).ToString();
+                }
+                else
+                {
+                    System.Windows.MessageBox.Show("File does not exist!", "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+            else
+            {
+                System.Windows.MessageBox.Show("Width and Height must be greater than zero!", "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+
+        private void widthTxt_PreviewExecuted(object sender, ExecutedRoutedEventArgs e)
+        {
+            if (e.Command == ApplicationCommands.Paste)
+            {
+                e.Handled = true;
+            }
+        }
+
+
+        private void widthTxt_PreviewTextInput(object sender, TextCompositionEventArgs e)
+        {
+            if (!char.IsDigit(e.Text, e.Text.Length - 1))
+            {
+                e.Handled = true;
+            }
+        }
+
+
+        private void widthTxt_PreviewKeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                doResize();
+            }
+            else if (e.Key == Key.Space)
+            {
+                e.Handled = true;
+            }
+        } 
         #endregion
     }
 }
