@@ -459,11 +459,13 @@ namespace WPFImageViewer
                 }
                 else if (e.Key == Key.Left)
                 {
-                    mainMedia.Position = TimeSpan.FromSeconds(mainMedia.Position.TotalSeconds - 5);
+                    RoutedEventArgs eM = new RoutedEventArgs();
+                    previousButton_Click(sender, eM);
                 }
                 else if (e.Key == Key.Right)
                 {
-                    mainMedia.Position = TimeSpan.FromSeconds(mainMedia.Position.TotalSeconds + 5);
+                    RoutedEventArgs eM = new RoutedEventArgs();
+                    nextButton_Click(sender, eM);
                 }
             }
             else
@@ -471,13 +473,11 @@ namespace WPFImageViewer
                 if (e.Key == Key.Left)
                 {
                     RoutedEventArgs eM = new RoutedEventArgs();
-
                     previousButton_Click(sender, eM);
                 }
                 else if (e.Key == Key.Right)
                 {
                     RoutedEventArgs eM = new RoutedEventArgs();
-
                     nextButton_Click(sender, eM);
                 }
                 else if (e.Key == Key.Space && mediaExtension == MediaExtension.GIF)
