@@ -764,6 +764,7 @@ namespace WPFImageViewer
             showPreviousButton();
         }
 
+
         private void previousButtonGrid_MouseLeave(object sender, MouseEventArgs e)
         {
             hidePreviousButton();
@@ -773,6 +774,7 @@ namespace WPFImageViewer
         private void mainWindow_StateChanged(object sender, EventArgs e)
         {
             dragGrid.Visibility = Visibility.Collapsed;
+            changeMaximizeButton();
         }
 
 
@@ -805,6 +807,19 @@ namespace WPFImageViewer
 
 
         #region Generic methods
+        private void changeMaximizeButton()
+        {
+            if (WindowState == WindowState.Maximized)
+            {
+                maximizeButton.Content = 2;
+            }
+            else if (WindowState == WindowState.Normal)
+            {
+                maximizeButton.Content = 1;
+            }
+        }
+
+
         #region setMainMedia
         public void setMainMedia()
         {
@@ -943,6 +958,7 @@ namespace WPFImageViewer
             rectangle.Fill = new SolidColorBrush() { Color = Colors.BlueViolet, Opacity = 0.25f };
 
             hideTitleControls();
+            changeMaximizeButton();//the window_StateChanged is being skipped on the startup because of the style of the window so this method is also being called here
             zoomMenuItem.Header = "Zoom (" + zoomPercentage + "%)";
             navigationGridWhite.Visibility = Visibility.Collapsed;
             dragGrid.Visibility = Visibility.Collapsed;
