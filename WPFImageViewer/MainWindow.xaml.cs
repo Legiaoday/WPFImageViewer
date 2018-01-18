@@ -14,6 +14,7 @@ using System.Windows.Shapes;
 using System.Windows.Shell;
 using System.Windows.Threading;
 using System.Globalization;
+using Microsoft.VisualBasic.FileIO;
 #endregion
 
 namespace WPFImageViewer
@@ -2056,13 +2057,18 @@ namespace WPFImageViewer
 
                 try
                 {
-                    File.Delete(defaultMedia);
+                    //File.Delete(defaultMedia);
+                    FileSystem.DeleteFile(defaultMedia, UIOption.OnlyErrorDialogs, RecycleOption.SendToRecycleBin);
+                }
+                catch (FileNotFoundException)
+                {
+                    
                 }
                 catch (Exception)
                 {
                     throw;
-                } 
-                //FileSystem.DeleteFile(defaultMedia, 0, RecycleOption.SendToRecycleBin);
+                }
+
                 removeFromList();
             }
         }
@@ -2101,10 +2107,14 @@ namespace WPFImageViewer
 
             try
             {
-                File.Delete(defaultMedia);
-                //FileSystem.DeleteFile(defaultMedia, UIOption.AllDialogs, RecycleOption.SendToRecycleBin);
+                //File.Delete(defaultMedia);
+                FileSystem.DeleteFile(defaultMedia, UIOption.OnlyErrorDialogs, RecycleOption.SendToRecycleBin);
                 removeFromList();
                 this.IsHitTestVisible = true;
+            }
+            catch (FileNotFoundException)
+            {
+
             }
             catch (IOException)
             {
