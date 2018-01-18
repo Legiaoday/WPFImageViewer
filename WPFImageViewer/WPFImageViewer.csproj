@@ -84,6 +84,7 @@
     <Compile Include="CropWindow.xaml.cs">
       <DependentUpon>CropWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="CutFile.cs" />
     <Compile Include="LoadingControl.cs" />
     <Compile Include="SaveImageAs.cs" />
     <Compile Include="SaveMediaCopy.cs" />

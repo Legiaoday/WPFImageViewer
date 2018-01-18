@@ -4,18 +4,27 @@ using System.IO;
 
 namespace WPFImageViewer
 {
-    static class SaveMediaCopy
+    class CutFile
     {
-        #region SaveMedia
-        static public void SaveMedia(string filePath)
+        #region Move file
+        static public bool MoveFile(string filePath)
         {
+            //returns true if the file is moved or false it the user cancelled the operation
+
             try
             {
                 SaveFileDialog saveFile = new SaveFileDialog();
+                saveFile.Title = "Move File To";
                 saveFile.FileName = Path.GetFileNameWithoutExtension(filePath);
 
                 switch (Path.GetExtension(filePath))
                 {
+                    case ".jpg":
+                        saveFile.Filter = "JPEG (*.jpg)|*.jpg";
+                        break;
+                    case ".png":
+                        saveFile.Filter = "PNG (*.png)|*.png";
+                        break;
                     case ".gif":
                         saveFile.Filter = "GIF (*.gif)|*.gif";
                         break;
@@ -34,22 +43,27 @@ namespace WPFImageViewer
                     case ".mp3":
                         saveFile.Filter = "MP3 (*.mp3)|*.mp3";
                         break;
+                    case ".jpeg":
+                        saveFile.Filter = "JPEG (*.jpeg)|*.jpeg";
+                        break;
                 }
 
                 if (saveFile.ShowDialog() == DialogResult.OK)
                 {
                     try
                     {
-                        File.Copy(filePath, saveFile.FileName);
+                        File.Move(filePath, saveFile.FileName);
+                        return true;
                     }
                     catch (Exception ex)
                     {
-                        if (ex.HResult == -2147024816)//File already exits exception
+                        if (ex.HResult == -2147024713)//File already exits exception
                         {
                             try
                             {
                                 File.Delete(saveFile.FileName);
-                                File.Copy(filePath, saveFile.FileName);
+                                File.Move(filePath, saveFile.FileName);
+                                return true;
                             }
                             catch (Exception)
                             {
@@ -62,12 +76,14 @@ namespace WPFImageViewer
                         }
                     }
                 }
+
+                return false;          
             }
             catch (Exception ex)
             {
                 throw;
             }
-        } 
+        }
         #endregion
     }
 }

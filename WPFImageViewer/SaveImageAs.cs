@@ -90,10 +90,6 @@ namespace WPFImageViewer
                             encoder.Save(fileStream);
                         }
                     }
-                    else
-                    {
-
-                    }
                 }
             }
             catch (Exception ex)

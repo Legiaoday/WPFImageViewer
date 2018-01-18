@@ -26,7 +26,9 @@
                         <MenuItem Header="Open Media" Click="openMedia_Click"/>
                         <MenuItem Header="More" SubmenuOpened="more_SubmenuOpened">
                             <MenuItem Header="Open in the Explorer" Click="openExplorer_Click"/>
-                            <MenuItem Header="Save Media Copy" Click="saveMediaCopy_Click"/>
+                            <MenuItem Header="Save Media Copy" Click="saveMediaCopy_Click" InputGestureText="Ctrl+S"/>
+                            <MenuItem Header="Cut media" Click="cutMedia_Click" InputGestureText="Ctrl+X"/>
+                            <MenuItem Header="Capture snapshot" Click="snapshot_Click"/>
                             <MenuItem Header="After playback" SubmenuOpened="afterP_SubmenuOpened">
                                 <MenuItem Name="afterPLoop" Header="Loop" Checked="afterPlayback_Checked" IsCheckable="True"/>
                                 <MenuItem Name="afterPNothing" Header="Do nothing" Checked="afterPlayback_Checked" IsCheckable="True"/>
@@ -37,9 +39,8 @@
                                 <MenuItem Name="orderBDate" Header="Date" Checked="orderBy_Checked" IsCheckable="True"/>
                             </MenuItem>
                             <MenuItem Name="keepRatio" Header="Keep aspect ratio while resizing" PreviewMouseDown="keepRatio_Checked" IsCheckable="True"/>
-                            <MenuItem Header="Delete" PreviewMouseDown="deleteFile_PreviewMouseDown"/>
+                            <MenuItem Header="Delete" PreviewMouseDown="deleteFile_PreviewMouseDown" InputGestureText="Del"/>
                         </MenuItem>
-                        <MenuItem Header="Save as image..." Click="snapshot_Click"/>
                         <MenuItem Header="Close" Click="closeApp_Click"/>
                     </ContextMenu>
                 </MediaElement.ContextMenu>
@@ -49,7 +50,7 @@
                 <Image.ContextMenu>
                     <ContextMenu x:Name="imageContextMenu">
                         <MenuItem Header="Open Media" Click="openMedia_Click"/>
-                        <MenuItem Header="Crop Mode" Click="cropMode_Click"/>
+                        <MenuItem Header="Crop Mode" Click="cropMode_Click" InputGestureText="C"/>
                         <MenuItem Header="More" SubmenuOpened="more_SubmenuOpened">
                             <MenuItem Header="Open in the Explorer" Click="openExplorer_Click"/>
                             <MenuItem Header="Set as Desktop Background">
@@ -73,9 +74,10 @@
                                 <MenuItem Name="orderBName2" Header="Name" Checked="orderBy_Checked" IsCheckable="True"/>
                                 <MenuItem Name="orderBDate2" Header="Date" Checked="orderBy_Checked" IsCheckable="True"/>
                             </MenuItem>
-                            <MenuItem Header="Save Image as..." Click="saveImage_Click"/>
+                            <MenuItem Header="Save Image as..." Click="saveImage_Click" InputGestureText="Ctrl+S"/>
+                            <MenuItem Header="Cut media" Click="cutMedia_Click" InputGestureText="Ctrl+X"/>
                             <MenuItem Name="keepRatio2" Header="Keep aspect ratio while resizing" PreviewMouseDown="keepRatio_Checked" IsCheckable="True"/>
-                            <MenuItem Header="Delete" PreviewMouseDown="deleteFile_PreviewMouseDown"/>
+                            <MenuItem Header="Delete" PreviewMouseDown="deleteFile_PreviewMouseDown" InputGestureText="Del"/>
                         </MenuItem>
                         <MenuItem Header="Close" Click="closeApp_Click"/>
                     </ContextMenu>

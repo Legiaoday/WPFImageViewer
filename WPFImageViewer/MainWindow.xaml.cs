@@ -88,6 +88,12 @@ namespace WPFImageViewer
 
 
         #region Generic events
+        private void cutMedia_Click(object sender, RoutedEventArgs e)
+        {
+            cutMedia();
+        }
+
+
         #region mainMedia_MediaOpened
         private void mainMedia_MediaOpened(object sender, RoutedEventArgs e)
         {
@@ -568,6 +574,27 @@ namespace WPFImageViewer
             {
                 deleteFile();
             }
+            else if (e.Key == Key.S && Keyboard.IsKeyDown(Key.LeftCtrl))
+            {
+                if (defaultMedia != null)
+                {
+                    if (mediaType == MediaType.Video || mediaType == MediaType.Audio)
+                    {
+                        SaveMediaCopy.SaveMedia(defaultMedia);
+                    }
+                    else
+                    {
+                        SaveImageAs.SaveImage(defaultMedia);
+                    }     
+                }
+            }
+            else if (e.Key == Key.X && Keyboard.IsKeyDown(Key.LeftCtrl))
+            {
+                if (defaultMedia != null)
+                {
+                    cutMedia();
+                }
+            }
         }
         #endregion
 
@@ -807,6 +834,15 @@ namespace WPFImageViewer
 
 
         #region Generic methods
+        private void cutMedia()
+        {
+            if (CutFile.MoveFile(defaultMedia))//returns true if the file is moved or false it the user cancelled the operation
+            {
+                cleanAAndDel();
+            }
+        }
+
+
         private void changeMaximizeButton()
         {
             if (WindowState == WindowState.Maximized)
@@ -1982,44 +2018,57 @@ namespace WPFImageViewer
 
                 if (MessageBox.Show("Are you sure you want to delete \"" + listOfFiles[defaultImageIndex] + "\"?", "Delete?", MessageBoxButton.YesNo, MessageBoxImage.Warning, MessageBoxResult.Yes) == MessageBoxResult.Yes)
                 {
-                    lblFileName.Content = null;
-                    fileName = null;
-
-                    if (mediaType == MediaType.Video || mediaExtension == MediaExtension.GIF || mediaType == MediaType.Audio)
-                    {
-                        this.IsHitTestVisible = false;
-                        navigationGrid.IsHitTestVisible = false;
-                        navigationGridWhite.Visibility = Visibility.Collapsed;
-                        if (isMediaPlaying && mediaType == MediaType.Image) loading.StopAnimation();
-                        TaskbarItemInfo = null;
-                        isMediaPlaying = false;
-                        timer.Stop();
-                        mainMedia.Stop();
-                        mainMedia.Source = null;
-                        mainMedia.Visibility = Visibility.Collapsed;
-
-                        DispatcherTimer deleteTimer = new DispatcherTimer();
-                        deleteTimer.Interval = TimeSpan.FromMilliseconds(100);
-                        deleteTimer.Tick += new EventHandler(deleteTimer_Tick);
-                        deleteTimer.Start();
-                    }
-                    else
-                    {
-                        if (mainImage.Source != null) mainImage.Source = null;
-                        seekBar.Value = 0;
-                        lblseekerValue.Content = null;
-                        lblmediaTimeSpan.Content = null;
-
-                        File.Delete(defaultMedia);
-                        //FileSystem.DeleteFile(defaultMedia, 0, RecycleOption.SendToRecycleBin);
-                        removeFromList();
-                    }
+                    cleanAAndDel();
                 } 
             }
         }
 
 
-        void removeFromList ()
+        private void cleanAAndDel()
+        {
+            lblFileName.Content = null;
+            fileName = null;
+
+            if (mediaType == MediaType.Video || mediaExtension == MediaExtension.GIF || mediaType == MediaType.Audio)
+            {
+                this.IsHitTestVisible = false;
+                navigationGrid.IsHitTestVisible = false;
+                navigationGridWhite.Visibility = Visibility.Collapsed;
+                if (isMediaPlaying && mediaType == MediaType.Image) loading.StopAnimation();
+                TaskbarItemInfo = null;
+                isMediaPlaying = false;
+                timer.Stop();
+                mainMedia.Stop();
+                mainMedia.Source = null;
+                mainMedia.Visibility = Visibility.Collapsed;
+
+                DispatcherTimer deleteTimer = new DispatcherTimer();
+                deleteTimer.Interval = TimeSpan.FromMilliseconds(10);
+                deleteTimer.Tick += new EventHandler(deleteTimer_Tick);
+                deleteTimer.Start(); 
+            }
+            else
+            {
+                if (mainImage.Source != null) mainImage.Source = null;
+                seekBar.Value = 0;
+                lblseekerValue.Content = null;
+                lblmediaTimeSpan.Content = null;
+
+                try
+                {
+                    File.Delete(defaultMedia);
+                }
+                catch (Exception)
+                {
+                    throw;
+                } 
+                //FileSystem.DeleteFile(defaultMedia, 0, RecycleOption.SendToRecycleBin);
+                removeFromList();
+            }
+        }
+
+
+        void removeFromList()
         {
             if (defaultImageIndex < listOfFiles.Count - 1)//checks if it isn't the last file
             {
@@ -2054,12 +2103,16 @@ namespace WPFImageViewer
             {
                 File.Delete(defaultMedia);
                 //FileSystem.DeleteFile(defaultMedia, UIOption.AllDialogs, RecycleOption.SendToRecycleBin);
-                this.IsHitTestVisible = true;
                 removeFromList();
+                this.IsHitTestVisible = true;
             }
             catch (IOException)
             {
                 tempT.Start();
+            }
+            catch (Exception)
+            {
+                throw;
             }
         }
         #endregion
