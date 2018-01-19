@@ -54,52 +54,23 @@ namespace WPFImageViewer
                 {
                     try
                     {
-                        //File.Move(filePath, saveFile.FileName);
                         FileSystem.MoveFile(filePath, saveFile.FileName, UIOption.AllDialogs);
+                        if (!File.Exists(filePath)) return true; else return false;
+                    }
+                    catch (OperationCanceledException)
+                    {
+                        return false;
+                    }
+                    catch (FileNotFoundException)
+                    {
+                        MessageBox.Show("File not found, operation cancelled!", "Error!", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         return true;
                     }
-                    catch (Exception ex)
-                    {
-                        if (ex.HResult == -2147024713)//File already exits exception
-                        {
-                            try
-                            {
-                                File.Delete(saveFile.FileName);
-                                FileSystem.MoveFile(filePath, saveFile.FileName, UIOption.AllDialogs);
-                                //File.Move(filePath, saveFile.FileName);
-                                return true;
-                            }
-                            catch (OperationCanceledException)
-                            {
-                                return false;
-                            }
-                            catch (FileNotFoundException)
-                            {
-                                MessageBox.Show("File not found, operation cancelled!", "Error!", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                                return false;
-                            }
-                            catch (Exception)
-                            {
-                                throw;
-                            }
-                        }
-                        else
-                        {
-                            throw;
-                        }
-                    }
                 }
-
-                return false;          
-            }
-            catch (OperationCanceledException)
-            {
-                return false;
-            }
-            catch (FileNotFoundException)
-            {
-                MessageBox.Show("File not found, operation cancelled!", "Error!", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return false;
+                else
+                {
+                    return false;
+                }  
             }
             catch (Exception)
             {

@@ -42,46 +42,17 @@ namespace WPFImageViewer
                 {
                     try
                     {
-                        //File.Copy(filePath, saveFile.FileName);
                         FileSystem.CopyFile(filePath, saveFile.FileName, UIOption.AllDialogs);
                     }
-                    catch (Exception ex)
+                    catch (OperationCanceledException)
                     {
-                        if (ex.HResult == -2147024816)//File already exits exception
-                        {
-                            try
-                            {
-                                File.Delete(saveFile.FileName);
-                                FileSystem.CopyFile(filePath, saveFile.FileName, UIOption.AllDialogs);
-                                //File.Copy(filePath, saveFile.FileName);
-                            }
-                            catch (OperationCanceledException)
-                            {
 
-                            }
-                            catch (FileNotFoundException)
-                            {
-                                MessageBox.Show("File not found, operation cancelled!", "Error!", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                            }
-                            catch (Exception)
-                            {
-                                throw;
-                            }
-                        }
-                        else
-                        {
-                            throw;
-                        }
+                    }
+                    catch (FileNotFoundException)
+                    {
+                        MessageBox.Show("File not found, operation cancelled!", "Error!", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
                 }
-            }
-            catch (OperationCanceledException)
-            {
-            
-            }
-            catch (FileNotFoundException)
-            {
-                MessageBox.Show("File not found, operation cancelled!", "Error!", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             catch (Exception)
             {
