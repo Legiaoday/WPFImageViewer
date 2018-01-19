@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
 using System.IO;
+using Microsoft.VisualBasic.FileIO;
 
 namespace WPFImageViewer
 {
@@ -12,6 +13,7 @@ namespace WPFImageViewer
             try
             {
                 SaveFileDialog saveFile = new SaveFileDialog();
+                saveFile.OverwritePrompt = false;
                 saveFile.FileName = Path.GetFileNameWithoutExtension(filePath);
 
                 switch (Path.GetExtension(filePath))
@@ -40,7 +42,8 @@ namespace WPFImageViewer
                 {
                     try
                     {
-                        File.Copy(filePath, saveFile.FileName);
+                        //File.Copy(filePath, saveFile.FileName);
+                        FileSystem.CopyFile(filePath, saveFile.FileName, UIOption.AllDialogs);
                     }
                     catch (Exception ex)
                     {
@@ -49,7 +52,16 @@ namespace WPFImageViewer
                             try
                             {
                                 File.Delete(saveFile.FileName);
-                                File.Copy(filePath, saveFile.FileName);
+                                FileSystem.CopyFile(filePath, saveFile.FileName, UIOption.AllDialogs);
+                                //File.Copy(filePath, saveFile.FileName);
+                            }
+                            catch (OperationCanceledException)
+                            {
+
+                            }
+                            catch (FileNotFoundException)
+                            {
+                                MessageBox.Show("File not found, operation cancelled!", "Error!", MessageBoxButtons.OK, MessageBoxIcon.Error);
                             }
                             catch (Exception)
                             {
@@ -63,7 +75,15 @@ namespace WPFImageViewer
                     }
                 }
             }
-            catch (Exception ex)
+            catch (OperationCanceledException)
+            {
+            
+            }
+            catch (FileNotFoundException)
+            {
+                MessageBox.Show("File not found, operation cancelled!", "Error!", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            catch (Exception)
             {
                 throw;
             }

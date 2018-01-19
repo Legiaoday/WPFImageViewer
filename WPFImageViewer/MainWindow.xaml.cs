@@ -577,7 +577,7 @@ namespace WPFImageViewer
             }
             else if (e.Key == Key.S && Keyboard.IsKeyDown(Key.LeftCtrl))
             {
-                if (defaultMedia != null)
+                if (defaultMedia != null && mainImage.Source != null || mainMedia.Source != null)
                 {
                     if (mediaType == MediaType.Video || mediaType == MediaType.Audio)
                     {
@@ -591,7 +591,7 @@ namespace WPFImageViewer
             }
             else if (e.Key == Key.X && Keyboard.IsKeyDown(Key.LeftCtrl))
             {
-                if (defaultMedia != null)
+                if (defaultMedia != null && mainImage.Source != null || mainMedia.Source != null)
                 {
                     cutMedia();
                 }
@@ -2114,7 +2114,8 @@ namespace WPFImageViewer
             }
             catch (FileNotFoundException)
             {
-
+                removeFromList();
+                this.IsHitTestVisible = true;
             }
             catch (IOException)
             {
