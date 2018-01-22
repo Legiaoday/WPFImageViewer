@@ -2353,6 +2353,18 @@ namespace WPFImageViewer
         {
             cleanBeforeCut();
 
+            DispatcherTimer cutTimer = new DispatcherTimer();
+            cutTimer.Interval = TimeSpan.FromMilliseconds(200);
+            cutTimer.Tick += new EventHandler(cutTimer_Tick);
+            cutTimer.Start(); 
+        }
+
+
+        void cutTimer_Tick(object sender, EventArgs e)
+        {
+            DispatcherTimer tempT = sender as DispatcherTimer;
+            tempT.Stop();
+
             if (CutFile.MoveFile(defaultMedia)) cleanAAndDel(); else setMainMedia();//returns true if the file is moved or false if the operation was cancelled
         }
 
