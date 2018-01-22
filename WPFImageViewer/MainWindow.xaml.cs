@@ -89,12 +89,6 @@ namespace WPFImageViewer
 
 
         #region Generic events
-        private void cutMedia_Click(object sender, RoutedEventArgs e)
-        {
-            cutMedia();
-        }
-
-
         #region mainMedia_MediaOpened
         private void mainMedia_MediaOpened(object sender, RoutedEventArgs e)
         {
@@ -835,15 +829,6 @@ namespace WPFImageViewer
 
 
         #region Generic methods
-        private void cutMedia()
-        {
-            if (CutFile.MoveFile(defaultMedia))//returns true if the file is moved or false it the user cancelled the operation
-            {
-                cleanAAndDel();
-            }
-        }
-
-
         private void changeMaximizeButton()
         {
             if (WindowState == WindowState.Maximized)
@@ -2057,7 +2042,6 @@ namespace WPFImageViewer
 
                 try
                 {
-                    //File.Delete(defaultMedia);
                     FileSystem.DeleteFile(defaultMedia, UIOption.OnlyErrorDialogs, RecycleOption.SendToRecycleBin);
                 }
                 catch (FileNotFoundException)
@@ -2107,7 +2091,6 @@ namespace WPFImageViewer
 
             try
             {
-                //File.Delete(defaultMedia);
                 FileSystem.DeleteFile(defaultMedia, UIOption.OnlyErrorDialogs, RecycleOption.SendToRecycleBin);
                 removeFromList();
                 this.IsHitTestVisible = true;
@@ -2361,6 +2344,36 @@ namespace WPFImageViewer
             }
 
             coordLbl.Content = "W: " + Convert.ToInt32(origRec.X) + " H: " + Convert.ToInt32(origRec.Y);
+        }
+        #endregion
+
+
+        #region Cut media
+        private void cutMedia()
+        {
+            cleanBeforeCut();
+
+            if (CutFile.MoveFile(defaultMedia)) cleanAAndDel(); else setMainMedia();//returns true if the file is moved or false if the operation was cancelled
+        }
+
+
+        public void cleanBeforeCut()
+        {
+            if (mediaType == MediaType.Video || mediaExtension == MediaExtension.GIF || mediaType == MediaType.Audio)
+            {
+                mainMedia.Stop();
+                mainMedia.Source = null;
+            }
+            else
+            {
+                if (mainImage.Source != null) mainImage.Source = null;
+            }
+        }
+
+
+        private void cutMedia_Click(object sender, RoutedEventArgs e)
+        {
+            cutMedia();
         }
         #endregion
     }

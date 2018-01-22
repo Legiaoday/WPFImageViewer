@@ -7,7 +7,6 @@ namespace WPFImageViewer
 {
     class CutFile
     {
-        #region Move file
         static public bool MoveFile(string filePath)
         {
             //returns true if the file is moved or false it the user cancelled the operation
@@ -77,6 +76,5 @@ namespace WPFImageViewer
                 throw;
             }
         }
-        #endregion
     }
 }
