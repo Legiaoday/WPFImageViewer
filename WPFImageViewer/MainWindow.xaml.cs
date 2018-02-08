@@ -529,28 +529,25 @@ namespace WPFImageViewer
                         Point mainWindowDimensions = new Point(mainWindow.ActualWidth, mainWindow.ActualHeight);
                         originalImageDimensions = ZoomImage.GetSourceDimensions(defaultMedia);
 
-                        //if (mainWindowDimensions.X < originalImageDimensions[0] || mainWindowDimensions.Y < originalImageDimensions[1])
-                        //{
-                            if (originalImageDimensions[0] < originalImageDimensions[1] && mainWindowDimensions.X > mainWindowDimensions.Y)
-                            {
-                                ZoomImage.PerformeZoomBottom(mainImage, ImageBackGround, mainWindowDimensions);
-                                zoomIndex++;
-                                hideControlsZoom();
-                                mainImage.Cursor = Cursors.Hand;
+                        if (originalImageDimensions[0] < originalImageDimensions[1] && mainWindowDimensions.X > mainWindowDimensions.Y)
+                        {
+                            ZoomImage.PerformeZoomBottom(mainImage, ImageBackGround, mainWindowDimensions);
+                            zoomIndex++;
+                            hideControlsZoom();
+                            mainImage.Cursor = Cursors.Hand;
 
-                                if (WindowState == WindowState.Normal)
-                                {
-                                    ResizeMode = ResizeMode.CanMinimize;
-                                }
+                            if (WindowState == WindowState.Normal)
+                            {
+                                ResizeMode = ResizeMode.CanMinimize;
                             }
-                        //}
+                        }
                     }
                     else if (zoomIndex > 0)
                     {
                         revertZoom();
                     }
                 }
-                else if (e.Key == Key.C && mediaExtension != MediaExtension.GIF)
+                else if (e.Key == Key.C && mediaExtension != MediaExtension.GIF && zoomIndex == 0)
                 {
                     if (!isCropEnabled)
                     {
