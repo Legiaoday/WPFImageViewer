@@ -5,7 +5,9 @@
 /.vs/WPFImageViewer/v15
 /WPFImageViewer/obj
 /WPFImageViewer/bin/Debug
-/WPFImageViewer/bin/Release
+/WPFImageViewer/bin/Release/WPFImageViewer.exe.config
+/WPFImageViewer/bin/Release/WPFImageViewer.pdb
+/WPFImageViewer/bin/Release/WPFImgConfig.xml
 /WPFImageViewer/bin/x64/Debug
 /WPFImageViewer/bin/x64/Release/WPFImageViewer.exe.config
 /WPFImageViewer/bin/x64/Release/WPFImageViewer.pdb
