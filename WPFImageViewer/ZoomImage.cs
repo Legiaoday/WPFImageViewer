@@ -11,7 +11,9 @@ namespace WPFImageViewer
         private static Point mainImageDimensions;
         private static Point mainWindowPos;
         private static Point mainMediaGridDimensions;
-
+        //halfZoomModifier is used to zoom the upper/bottom half of the image. A number 2 will zoom him exactly half of the screen, a lower number than 2 will zoom in less and a higher number will zoom in more than half
+        //for example: 1.5 will zoom in 75% of either the upper or bottom part of the image
+        private const double halfZoomModifier = 1.7;
 
         #region PerformeZoom
         public static void PerformeZoom(Image mainImage, Border ImageBackGround, string defaultMedia, WindowState arg3, Point windowPos, Point mainMediaGridDimen, short zoomPercentage)
@@ -56,10 +58,10 @@ namespace WPFImageViewer
 
 
         #region PerformeZoomTop
-        public static void PerformeZoomTop(Image mainImage, Border ImageBackGround, Point mainWindowDimensions)
+        public static void PerformeZoomTop(Image mainImage, Border ImageBackGround, Point mainWindowDimensions)//1516x2018
         {
             mainImage.Width = mainWindowDimensions.X;
-            mainImage.Height = mainWindowDimensions.Y * 2;
+            mainImage.Height = mainWindowDimensions.Y * halfZoomModifier;//mainImage.Height = mainWindowDimensions.Y * 2;
 
             Thickness margin = mainImage.Margin;
             margin.Left = 0;
@@ -74,11 +76,11 @@ namespace WPFImageViewer
         public static void PerformeZoomBottom(Image mainImage, Border ImageBackGround, Point mainWindowDimensions)
         {
             mainImage.Width = mainWindowDimensions.X;
-            mainImage.Height = mainWindowDimensions.Y * 2;
+            mainImage.Height = mainWindowDimensions.Y * halfZoomModifier;//mainImage.Height = mainWindowDimensions.Y * 2;
 
             Thickness margin = mainImage.Margin;
             margin.Left = 0;
-            margin.Top = mainImage.ActualHeight * -1;
+            margin.Top = (mainImage.Height - mainWindowDimensions.Y) * -1;//margin.Top = mainImage.ActualHeight * -1;
             mainImage.Margin = margin;
             ImageBackGround.Margin = margin;
         }
