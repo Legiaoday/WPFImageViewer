@@ -20,6 +20,7 @@ namespace WPFImageViewer
         public AfterP AfterPlayback { get; set; }
         public OrderB OrderBy { get; set; }
         public bool KeepRatio { get; set; }
+        public short ZoomStep { get; set; }
 
         public WindowState WindowState
         {
@@ -54,6 +55,7 @@ namespace WPFImageViewer
             AfterPlayback = AfterP.Loop;
             OrderBy = OrderB.Name;
             KeepRatio = false;
+            ZoomStep = 10;
         }
 
 
@@ -83,7 +85,7 @@ namespace WPFImageViewer
             writer.Formatting = Formatting.Indented;
             writer.Indentation = 2;
             writer.WriteStartElement("Table");
-            createNode("Normal", "100", "100", "0", "0", "640", "360", "False", "Loop", "Name", "False", writer);
+            createNode("Normal", "100", "100", "0", "0", "640", "360", "False", "Loop", "Name", "False", "10", writer);
             writer.WriteEndElement();
             writer.WriteEndDocument();
             writer.Close();
@@ -92,7 +94,7 @@ namespace WPFImageViewer
 
 
         #region createNode
-        private static void createNode(string WindowState, string Volume, string Zoom, string sPositionX, string sPositionY, string Width, string Height, string Mute, string AfterP, string OrderBy, string KeepRatio, XmlTextWriter writer)
+        private static void createNode(string WindowState, string Volume, string Zoom, string sPositionX, string sPositionY, string Width, string Height, string Mute, string AfterP, string OrderBy, string KeepRatio, string ZoomStep, XmlTextWriter writer)
         {
             writer.WriteStartElement("Config");
             writer.WriteStartElement("WindowState");
@@ -127,6 +129,9 @@ namespace WPFImageViewer
             writer.WriteEndElement();
             writer.WriteStartElement("KeepRatio");
             writer.WriteString(KeepRatio);
+            writer.WriteEndElement();
+            writer.WriteStartElement("ZoomStep");
+            writer.WriteString(ZoomStep);
             writer.WriteEndElement();
             writer.WriteEndElement();
         }
@@ -212,6 +217,9 @@ namespace WPFImageViewer
                             case "KeepRatio":
                                 settings.KeepRatio = Convert.ToBoolean(node2.InnerText);
                                 break;
+                            case "ZoomStep":
+                                settings.ZoomStep = Convert.ToInt16(node2.InnerText);
+                                break;
                         }
                     }
 
@@ -278,6 +286,9 @@ namespace WPFImageViewer
                                 break;
                             case "KeepRatio":
                                 node2.InnerText = settings.KeepRatio.ToString();
+                                break;
+                            case "ZoomStep":
+                                node2.InnerText = settings.ZoomStep.ToString();
                                 break;
                         }
                     }

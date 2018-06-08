@@ -70,6 +70,16 @@
                                 <MenuItem x:Name="zoom150" Header="150%" IsCheckable="True" Checked="zoomPercentage_Checked"/>
                                 <MenuItem x:Name="zoom200" Header="200%" IsCheckable="True" Checked="zoomPercentage_Checked"/>
                             </MenuItem>
+                            <MenuItem x:Name="zoomStepMenuItem" Header="Zoom Step" SubmenuOpened="zoomStepMenuItem_SubmenuOpened">
+                                <MenuItem x:Name="zoomStep10" Header="10%" IsCheckable="True" Checked="zoomStep_Checked"/>
+                                <MenuItem x:Name="zoomStep12" Header="12%" IsCheckable="True" Checked="zoomStep_Checked"/>
+                                <MenuItem x:Name="zoomStep15" Header="15%" IsCheckable="True" Checked="zoomStep_Checked"/>
+                                <MenuItem x:Name="zoomStep20" Header="20%" IsCheckable="True" Checked="zoomStep_Checked"/>
+                                <MenuItem x:Name="zoomStep25" Header="25%" IsCheckable="True" Checked="zoomStep_Checked"/>
+                                <MenuItem x:Name="zoomStep30" Header="30%" IsCheckable="True" Checked="zoomStep_Checked"/>
+                                <MenuItem x:Name="zoomStep40" Header="40%" IsCheckable="True" Checked="zoomStep_Checked"/>
+                                <MenuItem x:Name="zoomStep50" Header="50%" IsCheckable="True" Checked="zoomStep_Checked"/>
+                            </MenuItem>
                             <MenuItem Header="Order files by..." SubmenuOpened="orderB_SubmenuOpened">
                                 <MenuItem Name="orderBName2" Header="Name" Checked="orderBy_Checked" IsCheckable="True"/>
                                 <MenuItem Name="orderBDate2" Header="Date" Checked="orderBy_Checked" IsCheckable="True"/>

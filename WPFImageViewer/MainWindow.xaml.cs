@@ -29,7 +29,8 @@ namespace WPFImageViewer
         public string defaultMedia = null;//holds the path of the current media
         bool isMediaPlaying = true;
         short zoomIndex = 0;
-        const short maxHalfZoomIndex = 10;
+        short zoomPercentage = 100;
+        const short maxHalfZoomIndex = 20;
         short halfZoomIncrementPercent = 10;
         System.Drawing.Point lastDrag = new System.Drawing.Point();
         int[] originalImageDimensions = new int[2];
@@ -43,9 +44,9 @@ namespace WPFImageViewer
         CancellationTokenSource tokenSourceTitle = new CancellationTokenSource();
         CancellationTokenSource tokenSourceNavigation = new CancellationTokenSource();
         Thickness margin;
-        short zoomPercentage = 100;
         bool zoomPreventLoop = false;
         bool firstZoomCheck = true;
+        bool firstZoomStepCheck = true;
         string fileName;
         bool isSettingsChanged = false;
         bool isInitResize = false;
@@ -263,6 +264,7 @@ namespace WPFImageViewer
                 settings.Volume = mainMedia.Volume;
                 settings.WindowState = WindowState;
                 settings.Zoom = zoomPercentage;
+                settings.ZoomStep = halfZoomIncrementPercent;
 
                 if (WindowState == WindowState.Normal)
                 {
@@ -942,6 +944,7 @@ namespace WPFImageViewer
             mainMedia.Volume = settings.Volume;
             volumeSlider.Value = settings.Volume * 100;
             zoomPercentage = settings.Zoom;
+            halfZoomIncrementPercent = settings.ZoomStep;
             if (settings.IsMuted)
             {
                 mainMedia.IsMuted = true;
@@ -981,6 +984,7 @@ namespace WPFImageViewer
             hideTitleControls();
             changeMaximizeButton();//the window_StateChanged is being skipped on the startup because of the style of the window so this method is also being called here
             zoomMenuItem.Header = "Zoom (" + zoomPercentage + "%)";
+            zoomStepMenuItem.Header = "Zoom Step (" + halfZoomIncrementPercent + "%)";
             navigationGridWhite.Visibility = Visibility.Collapsed;
             dragGrid.Visibility = Visibility.Collapsed;
             hideNextButton();
@@ -1454,6 +1458,118 @@ namespace WPFImageViewer
         #endregion
 
 
+        #region Zoom Step checkables
+        private void zoomStepMenuItem_SubmenuOpened(object sender, RoutedEventArgs e)
+        {
+            setZoomStepChecked();
+        }
+
+
+        private void zoomStep_Checked(object sender, RoutedEventArgs e)
+        {
+            MenuItem obj = sender as MenuItem;
+
+            if (!zoomPreventLoop)
+            {
+                cleanZoomStepChecked();
+                zoomPreventLoop = true;
+
+                switch (obj.Name)
+                {
+                    case "zoomStep10":
+                        halfZoomIncrementPercent = 10;
+                        zoomStep10.IsChecked = true;
+                        break;
+                    case "zoomStep12":
+                        halfZoomIncrementPercent = 12;
+                        zoomStep12.IsChecked = true;
+                        break;
+                    case "zoomStep15":
+                        halfZoomIncrementPercent = 15;
+                        zoomStep15.IsChecked = true;
+                        break;
+                    case "zoomStep20":
+                        halfZoomIncrementPercent = 20;
+                        zoomStep20.IsChecked = true;
+                        break;
+                    case "zoomStep25":
+                        halfZoomIncrementPercent = 25;
+                        zoomStep25.IsChecked = true;
+                        break;
+                    case "zoomStep30":
+                        halfZoomIncrementPercent = 30;
+                        zoomStep30.IsChecked = true;
+                        break;
+                    case "zoomStep40":
+                        halfZoomIncrementPercent = 40;
+                        zoomStep40.IsChecked = true;
+                        break;
+                    case "zoomStep50":
+                        halfZoomIncrementPercent = 50;
+                        zoomStep50.IsChecked = true;
+                        break;
+                }
+
+                zoomStepMenuItem.Header = "Zoom Step (" + halfZoomIncrementPercent + "%)";
+                zoomPreventLoop = false;
+                if (!isSettingsChanged && isInitResize) isSettingsChanged = true;
+            }
+        }
+
+
+        private void cleanZoomStepChecked()
+        {
+            zoomStep10.IsChecked = false;
+            zoomStep12.IsChecked = false;
+            zoomStep15.IsChecked = false;
+            zoomStep20.IsChecked = false;
+            zoomStep25.IsChecked = false;
+            zoomStep30.IsChecked = false;
+            zoomStep40.IsChecked = false;
+            zoomStep50.IsChecked = false;
+        }
+
+
+        #region setZoomStepChecked
+        private void setZoomStepChecked()
+        {
+            if (firstZoomStepCheck)
+            {
+                switch (halfZoomIncrementPercent)
+                {
+                    case 10:
+                        zoomStep10.IsChecked = true;
+                        break;
+                    case 12:
+                        zoomStep12.IsChecked = true;
+                        break;
+                    case 15:
+                        zoomStep15.IsChecked = true;
+                        break;
+                    case 20:
+                        zoomStep20.IsChecked = true;
+                        break;
+                    case 25:
+                        zoomStep25.IsChecked = true;
+                        break;
+                    case 30:
+                        zoomStep30.IsChecked = true;
+                        break;
+                    case 40:
+                        zoomStep40.IsChecked = true;
+                        break;
+                    case 50:
+                        zoomStep50.IsChecked = true;
+                        break;
+                }
+
+                firstZoomStepCheck = false;
+            }
+        }
+        #endregion 
+        #endregion
+
+
         #region After playback checkables
         private void afterP_SubmenuOpened(object sender, RoutedEventArgs e)
         {
@@ -1525,7 +1641,6 @@ namespace WPFImageViewer
             afterPNext.IsChecked = false;
         }
         #endregion
-
 
 
         #region OrderBy checkable menu
@@ -2380,7 +2495,6 @@ namespace WPFImageViewer
                 if (mainImage.Source != null) mainImage.Source = null;
             }
         }
-
 
         private void cutMedia_Click(object sender, RoutedEventArgs e)
         {
