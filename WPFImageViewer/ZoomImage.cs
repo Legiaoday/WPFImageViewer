@@ -13,7 +13,7 @@ namespace WPFImageViewer
         private static Point mainMediaGridDimensions;
         //halfZoomModifier is used to zoom the upper/bottom half of the image. A number 2 will zoom him exactly half of the screen, a lower number than 2 will zoom in less and a higher number will zoom in more than half
         //for example: 1.5 will zoom in 75% of either the upper or bottom part of the image
-        private const double halfZoomModifier = 1.7;
+        private const double halfZoomModifier = 1.5;
 
         #region PerformeZoom
         public static void PerformeZoom(Image mainImage, Border ImageBackGround, string defaultMedia, WindowState arg3, Point windowPos, Point mainMediaGridDimen, short zoomPercentage)
