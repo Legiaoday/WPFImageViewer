@@ -29,6 +29,8 @@ namespace WPFImageViewer
         public string defaultMedia = null;//holds the path of the current media
         bool isMediaPlaying = true;
         short zoomIndex = 0;
+        short maxHalfZoomIndex = 10;
+        short halfZoomIncrementPercent = 10;
         System.Drawing.Point lastDrag = new System.Drawing.Point();
         int[] originalImageDimensions = new int[2];
         bool isDraggingImage = false;
@@ -294,7 +296,7 @@ namespace WPFImageViewer
             {
                 if (e.ChangedButton == MouseButton.Left && e.ClickCount == 2)
                 {
-                    if (zoomIndex > 0)
+                    if (zoomIndex != 0)
                     {
                         revertZoom();
                     }
@@ -496,7 +498,7 @@ namespace WPFImageViewer
                 }
                 else if (e.Key == Key.Up)
                 {
-                    if (zoomIndex == 0)
+                    if (zoomIndex >= 0 && zoomIndex < maxHalfZoomIndex)
                     {
                         Point mainWindowDimensions = new Point(mainWindow.ActualWidth, mainWindow.ActualHeight);
                         originalImageDimensions = ZoomImage.GetSourceDimensions(defaultMedia);
@@ -505,8 +507,8 @@ namespace WPFImageViewer
                         //{
                             if (originalImageDimensions[0] < originalImageDimensions[1] && mainWindowDimensions.X > mainWindowDimensions.Y)
                             {
-                                ZoomImage.PerformeZoomTop(mainImage, ImageBackGround, mainWindowDimensions);
                                 zoomIndex++;
+                                ZoomImage.PerformeZoomTop(mainImage, ImageBackGround, mainWindowDimensions, zoomIndex, halfZoomIncrementPercent);
                                 hideControlsZoom();
                                 mainImage.Cursor = Cursors.Hand;
 
@@ -517,22 +519,22 @@ namespace WPFImageViewer
                             }
                         //}
                     }
-                    else if (zoomIndex > 0)
+                    else
                     {
                         revertZoom();
                     }
                 }
                 else if (e.Key == Key.Down)
                 {
-                    if (zoomIndex == 0)
+                    if (zoomIndex <= 0 && zoomIndex > (maxHalfZoomIndex * -1))
                     {
                         Point mainWindowDimensions = new Point(mainWindow.ActualWidth, mainWindow.ActualHeight);
                         originalImageDimensions = ZoomImage.GetSourceDimensions(defaultMedia);
 
                         if (originalImageDimensions[0] < originalImageDimensions[1] && mainWindowDimensions.X > mainWindowDimensions.Y)
                         {
-                            ZoomImage.PerformeZoomBottom(mainImage, ImageBackGround, mainWindowDimensions);
-                            zoomIndex++;
+                            zoomIndex--;
+                            ZoomImage.PerformeZoomBottom(mainImage, ImageBackGround, mainWindowDimensions, zoomIndex, halfZoomIncrementPercent);
                             hideControlsZoom();
                             mainImage.Cursor = Cursors.Hand;
 
@@ -542,7 +544,7 @@ namespace WPFImageViewer
                             }
                         }
                     }
-                    else if (zoomIndex > 0)
+                    else
                     {
                         revertZoom();
                     }
@@ -923,7 +925,7 @@ namespace WPFImageViewer
             showTitleControls();
             hideTitleControls();
 
-            if (zoomIndex > 0)
+            if (zoomIndex != 0)
             {
                 revertZoom();
             }
@@ -1061,7 +1063,7 @@ namespace WPFImageViewer
 
         private void revertZoom()
         {
-            zoomIndex--;
+            zoomIndex = 0;
             ZoomImage.RevertZoom(mainImage, ImageBackGround, mainMediaGrid, defaultMedia);
             showControlsZoom();
             mainImage.Cursor = Cursors.Arrow;

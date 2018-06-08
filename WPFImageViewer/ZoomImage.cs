@@ -13,7 +13,7 @@ namespace WPFImageViewer
         private static Point mainMediaGridDimensions;
         //halfZoomModifier is used to zoom the upper/bottom half of the image. A number 2 will zoom him exactly half of the screen, a lower number than 2 will zoom in less and a higher number will zoom in more than half
         //for example: 1.5 will zoom in 75% of either the upper or bottom part of the image
-        private const double halfZoomModifier = 1.5;
+        private const double halfZoomModifier = 2;
 
         #region PerformeZoom
         public static void PerformeZoom(Image mainImage, Border ImageBackGround, string defaultMedia, WindowState arg3, Point windowPos, Point mainMediaGridDimen, short zoomPercentage)
@@ -58,10 +58,23 @@ namespace WPFImageViewer
 
 
         #region PerformeZoomTop
-        public static void PerformeZoomTop(Image mainImage, Border ImageBackGround, Point mainWindowDimensions)//1516x2018
+        public static void PerformeZoomTop(Image mainImage, Border ImageBackGround, Point mainWindowDimensions, short zoomIndex, short halfZoomIncrementPercent)
         {
+            //halfZoomModifier is used to zoom in on either the upper or bottom portion of the image. zoomIndex allows for the zoom percentage (halfZoomIncrementPercent) to stack a certain amount of times
+            //doubling the size of mainWindowDimensions.Y means that 50% of either the upper or bottom part of the image will be zoomed on screen
+            //four times mainWindowDimensions.Y means that only 25% of the upper or bottom part of the image will be zoomed on screen
+            //halfZoomModifier is used to determined how many times mainWindowDimensions.Y will be multiplied, the higher its value the stronger the zoom will be, until the image fills the entire window area
+            double halfZoomModifier = Convert.ToDouble(100 - (halfZoomIncrementPercent * zoomIndex));
+
+            //a division by zero can occur and the value of halfZoomModifier can end up being infinity or negative
+            //we need to check if this happens, otherwise an error will be thrown
+            if (!double.IsPositiveInfinity(halfZoomModifier) && halfZoomModifier > 0)
+                halfZoomModifier = 100 / halfZoomModifier;
+            else
+                halfZoomModifier = 100;
+
             mainImage.Width = mainWindowDimensions.X;
-            mainImage.Height = mainWindowDimensions.Y * halfZoomModifier;//mainImage.Height = mainWindowDimensions.Y * 2;
+            mainImage.Height = mainWindowDimensions.Y * halfZoomModifier;//mainImage.Height = mainWindowDimensions.Y * halfZoomModifier;
 
             Thickness margin = mainImage.Margin;
             margin.Left = 0;
@@ -73,14 +86,28 @@ namespace WPFImageViewer
 
 
         #region PerformeZoomBottom
-        public static void PerformeZoomBottom(Image mainImage, Border ImageBackGround, Point mainWindowDimensions)
+        public static void PerformeZoomBottom(Image mainImage, Border ImageBackGround, Point mainWindowDimensions, short zoomIndex, short halfZoomIncrementPercent)
         {
+            //halfZoomModifier is used to zoom in on either the upper or bottom portion of the image. zoomIndex allows for the zoom percentage (halfZoomIncrementPercent) to stack a certain amount of times
+            //doubling the size of mainWindowDimensions.Y means that 50% of either the upper or bottom part of the image will be zoomed on screen
+            //four times mainWindowDimensions.Y means that only 25% of the upper or bottom part of the image will be zoomed on screen
+            //halfZoomModifier is used to determined how many times mainWindowDimensions.Y will be multiplied, the higher its value the stronger the zoom will be, until the image fills the entire window area
+            zoomIndex *= -1;
+            double halfZoomModifier = Convert.ToDouble(100 - (halfZoomIncrementPercent * zoomIndex));
+
+            //a division by zero can occur and the value of halfZoomModifier can end up being infinity or negative
+            //we need to check if this happens, otherwise an error will be thrown
+            if (!double.IsPositiveInfinity(halfZoomModifier) && halfZoomModifier > 0)
+                halfZoomModifier = 100 / halfZoomModifier;
+            else
+                halfZoomModifier = 100;
+
             mainImage.Width = mainWindowDimensions.X;
-            mainImage.Height = mainWindowDimensions.Y * halfZoomModifier;//mainImage.Height = mainWindowDimensions.Y * 2;
+            mainImage.Height = mainWindowDimensions.Y * halfZoomModifier;//mainImage.Height = mainWindowDimensions.Y * halfZoomModifier;
 
             Thickness margin = mainImage.Margin;
             margin.Left = 0;
-            margin.Top = (mainImage.Height - mainWindowDimensions.Y) * -1;//margin.Top = mainImage.ActualHeight * -1;
+            margin.Top = (mainImage.Height - mainWindowDimensions.Y) * -1;
             mainImage.Margin = margin;
             ImageBackGround.Margin = margin;
         }
