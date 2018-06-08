@@ -30,7 +30,7 @@ namespace WPFImageViewer
         bool isMediaPlaying = true;
         short zoomIndex = 0;
         short zoomPercentage = 100;
-        const short maxHalfZoomIndex = 20;
+        const short maxHalfZoomIndex = 10;
         short halfZoomIncrementPercent = 10;
         System.Drawing.Point lastDrag = new System.Drawing.Point();
         int[] originalImageDimensions = new int[2];
