@@ -58,7 +58,7 @@ namespace WPFImageViewer
 
 
         #region PerformeZoomTop
-        public static void PerformeZoomTop(Image mainImage, Border ImageBackGround, Point mainWindowDimensions, short zoomIndex, short halfZoomIncrementPercent)
+        public static void PerformZoomTop(Image mainImage, Border ImageBackGround, Point mainWindowDimensions, short zoomIndex, short halfZoomIncrementPercent)
         {
             //halfZoomModifier is used to zoom in on either the upper or bottom portion of the image. zoomIndex allows for the zoom percentage (halfZoomIncrementPercent) to stack a certain amount of times
             //doubling the size of mainWindowDimensions.Y means that 50% of either the upper or bottom part of the image will be zoomed on screen
@@ -86,7 +86,7 @@ namespace WPFImageViewer
 
 
         #region PerformeZoomBottom
-        public static void PerformeZoomBottom(Image mainImage, Border ImageBackGround, Point mainWindowDimensions, short zoomIndex, short halfZoomIncrementPercent)
+        public static void PerformZoomBottom(Image mainImage, Border ImageBackGround, Point mainWindowDimensions, short zoomIndex, short halfZoomIncrementPercent)
         {
             //halfZoomModifier is used to zoom in on either the upper or bottom portion of the image. zoomIndex allows for the zoom percentage (halfZoomIncrementPercent) to stack a certain amount of times
             //doubling the size of mainWindowDimensions.Y means that 50% of either the upper or bottom part of the image will be zoomed on screen
