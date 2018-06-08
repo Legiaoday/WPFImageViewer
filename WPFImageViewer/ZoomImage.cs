@@ -100,13 +100,17 @@ namespace WPFImageViewer
             if (!double.IsPositiveInfinity(halfZoomModifier) && halfZoomModifier > 0)
                 halfZoomModifier = 100 / halfZoomModifier;
             else
-                halfZoomModifier = 100;
+                halfZoomModifier = 11;
 
             mainImage.Width = mainWindowDimensions.X;
-            mainImage.Height = mainWindowDimensions.Y * halfZoomModifier;//mainImage.Height = mainWindowDimensions.Y * halfZoomModifier;
-
+            if (halfZoomModifier <= 10)//this if is needed because when the value of halfZoomModifier is too high (like 100) the half zoom will not work properly
+                mainImage.Height = mainWindowDimensions.Y * halfZoomModifier;//mainImage.Height = mainWindowDimensions.Y * halfZoomModifier;
+            else
+                mainImage.Height = (mainImage.Width * mainImage.ActualHeight) / mainImage.ActualWidth;//rule of three to convert the height of the image to an equivalent of the width based of the width of the current window
+            
             Thickness margin = mainImage.Margin;
             margin.Left = 0;
+
             margin.Top = (mainImage.Height - mainWindowDimensions.Y) * -1;
             mainImage.Margin = margin;
             ImageBackGround.Margin = margin;

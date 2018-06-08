@@ -29,7 +29,7 @@ namespace WPFImageViewer
         public string defaultMedia = null;//holds the path of the current media
         bool isMediaPlaying = true;
         short zoomIndex = 0;
-        short maxHalfZoomIndex = 10;
+        const short maxHalfZoomIndex = 10;
         short halfZoomIncrementPercent = 10;
         System.Drawing.Point lastDrag = new System.Drawing.Point();
         int[] originalImageDimensions = new int[2];
@@ -531,7 +531,7 @@ namespace WPFImageViewer
                         Point mainWindowDimensions = new Point(mainWindow.ActualWidth, mainWindow.ActualHeight);
                         originalImageDimensions = ZoomImage.GetSourceDimensions(defaultMedia);
 
-                        if (originalImageDimensions[0] < originalImageDimensions[1] && mainWindowDimensions.X > mainWindowDimensions.Y)
+                        if (originalImageDimensions[0] < originalImageDimensions[1] && mainWindowDimensions.X > mainWindowDimensions.Y)//DO NOT REMOVE THIS IF
                         {
                             zoomIndex--;
                             ZoomImage.PerformeZoomBottom(mainImage, ImageBackGround, mainWindowDimensions, zoomIndex, halfZoomIncrementPercent);
