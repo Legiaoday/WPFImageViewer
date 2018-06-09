@@ -30,7 +30,7 @@ namespace WPFImageViewer
         bool isMediaPlaying = true;
         short zoomIndex = 0;
         short zoomPercentage = 100;
-        const short maxHalfZoomIndex = 10;
+        const short maxHalfZoomIndex = 100;
         short halfZoomIncrementPercent = 10;
         System.Drawing.Point lastDrag = new System.Drawing.Point();
         int[] originalImageDimensions = new int[2];
@@ -502,7 +502,8 @@ namespace WPFImageViewer
                 {
                     if (zoomIndex >= 0 && zoomIndex < maxHalfZoomIndex)
                     {
-                        doHalfZoomTop();
+                        double maxHeightPossible = (mainImage.Width * mainImage.ActualHeight) / mainImage.ActualWidth;//rule of three to convert the height of the image to an equivalent of the width based of the width of the current window
+                        if(mainImage.Height < maxHeightPossible) doHalfZoomTop();//this is to prevent the zoomIndex from increasing when the iamge is already filling the whole screen
                     }
                     else if (zoomIndex < 0)//this is used to zoom back
                     {
@@ -519,7 +520,8 @@ namespace WPFImageViewer
                 {
                     if (zoomIndex <= 0 && zoomIndex > (maxHalfZoomIndex * -1))
                     {
-                        doHalfZoomBottom();
+                        double maxHeightPossible = (mainImage.Width * mainImage.ActualHeight) / mainImage.ActualWidth;//rule of three to convert the height of the image to an equivalent of the width based of the width of the current window
+                        if (mainImage.Height < maxHeightPossible) doHalfZoomBottom();//this is to prevent the zoomIndex from increasing when the image is already filling the whole screen
                     }
                     else if (zoomIndex > 0)//this is used to zoom back
                     {
@@ -2484,7 +2486,8 @@ namespace WPFImageViewer
         #endregion
 
 
-        void doHalfZoomTop ()
+        #region Half zoom
+        void doHalfZoomTop()
         {
             Point mainWindowDimensions = new Point(mainWindow.ActualWidth, mainWindow.ActualHeight);
             originalImageDimensions = ZoomImage.GetSourceDimensions(defaultMedia);
@@ -2524,6 +2527,7 @@ namespace WPFImageViewer
                     ResizeMode = ResizeMode.CanMinimize;
                 }
             }
-        }
+        } 
+        #endregion
     }
 }
