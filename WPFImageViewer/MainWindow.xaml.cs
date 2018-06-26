@@ -503,35 +503,30 @@ namespace WPFImageViewer
                     if (zoomIndex >= 0 && zoomIndex < maxHalfZoomIndex)
                     {
                         double maxHeightPossible = (mainImage.Width * mainImage.ActualHeight) / mainImage.ActualWidth;//rule of three to convert the height of the image to an equivalent of the width based of the width of the current window
-                        if(mainImage.Height < maxHeightPossible) doHalfZoomTop();//this is to prevent the zoomIndex from increasing when the iamge is already filling the whole screen
+                        if(mainImage.Height < maxHeightPossible) doHalfZoomTop();//this if is to prevent the zoomIndex from increasing when the image is already filling the whole screen
                     }
                     else if (zoomIndex < 0)//this is used to zoom back
                     {
                         zoomIndex++;
                         zoomIndex++;
                         doHalfZoomBottom();
+                        if (zoomIndex == 0) revertZoom();//re-enables controls after zoomIndex 'reverts' back to 0
                     }
-                    else
-                    {
-                        revertZoom();
-                    }
+
                 }
                 else if (e.Key == Key.Down)
                 {
                     if (zoomIndex <= 0 && zoomIndex > (maxHalfZoomIndex * -1))
                     {
                         double maxHeightPossible = (mainImage.Width * mainImage.ActualHeight) / mainImage.ActualWidth;//rule of three to convert the height of the image to an equivalent of the width based of the width of the current window
-                        if (mainImage.Height < maxHeightPossible) doHalfZoomBottom();//this is to prevent the zoomIndex from increasing when the image is already filling the whole screen
+                        if (mainImage.Height < maxHeightPossible) doHalfZoomBottom();//this if is to prevent the zoomIndex from increasing when the image is already filling the whole screen
                     }
                     else if (zoomIndex > 0)//this is used to zoom back
                     {
                         zoomIndex--;
                         zoomIndex--;
                         doHalfZoomTop();
-                    }
-                    else
-                    {
-                        revertZoom();
+                        if (zoomIndex == 0) revertZoom();//re-enables controls after zoomIndex 'reverts' back to 0
                     }
                 }
                 else if (e.Key == Key.C && mediaExtension != MediaExtension.GIF && zoomIndex == 0)
