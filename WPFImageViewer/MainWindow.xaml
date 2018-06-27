@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:WPFImageViewer"
         mc:Ignorable="d"
         Title="WPFImageViewer" Height="360" Width="640" WindowStartupLocation="CenterScreen" MinWidth="409" MinHeight="230" Icon="multimedia.ico"
-        PreviewKeyDown="mainWindow_PreviewKeyDown" WindowStyle="None" StateChanged="mainWindow_StateChanged" AllowsTransparency="True" ResizeMode="CanMinimize" Closing="mainWindow_Closing" Loaded="mainWindow_Loaded"
+        PreviewKeyDown="mainWindow_PreviewKeyDown" PreviewKeyUp="mainWindow_PreviewKeyUp" WindowStyle="None" StateChanged="mainWindow_StateChanged" AllowsTransparency="True" ResizeMode="CanMinimize" Closing="mainWindow_Closing" Loaded="mainWindow_Loaded"
         SizeChanged="mainWindow_SizeChanged" LocationChanged="mainWindow_LocationChanged" Deactivated="mainWindow_Deactivated" MouseMove="mainWindow_MouseMove">
     <Window.Background>
         <SolidColorBrush Opacity="0.9" Color="#FF171717"/>

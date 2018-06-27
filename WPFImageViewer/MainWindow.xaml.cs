@@ -28,12 +28,6 @@ namespace WPFImageViewer
         /*int previousImageIndex = 0;*///used to navigate throught the listOfFiles variable
         public string defaultMedia = null;//holds the path of the current media
         bool isMediaPlaying = true;
-        bool isZoomed = false;
-        short zoomIndex = 0;
-        short halfZoomIndex = 0;
-        short zoomPercentage = 100;
-        const short maxHalfZoomIndex = 100;
-        short halfZoomIncrementPercent = 10;
         System.Drawing.Point lastDrag = new System.Drawing.Point();
         int[] originalImageDimensions = new int[2];
         bool isDraggingImage = false;
@@ -94,6 +88,156 @@ namespace WPFImageViewer
 
 
         #region Generic events
+        private void mainWindow_PreviewKeyUp(object sender, KeyEventArgs e)
+        {
+            if (isHalfZoomStopFlip) allowZoomFlip();
+        }
+
+
+        #region mainWindow_PreviewKeyDown
+        private void mainWindow_PreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            if (mediaType == MediaType.Video || mediaType == MediaType.Audio)
+            {
+                if (e.Key == Key.Space)
+                {
+                    if (isMediaPlaying)
+                    {
+                        mainMedia.Pause();
+                        isMediaPlaying = false;
+                        taskBarMedia.ProgressState = TaskbarItemProgressState.Paused;
+                    }
+                    else
+                    {
+                        mainMedia.Play();
+                        isMediaPlaying = true;
+                        taskBarMedia.ProgressState = TaskbarItemProgressState.Normal;
+                    }
+                }
+                else if (e.Key == Key.Left)
+                {
+                    RoutedEventArgs eM = new RoutedEventArgs();
+                    previousButton_Click(sender, eM);
+                }
+                else if (e.Key == Key.Right)
+                {
+                    RoutedEventArgs eM = new RoutedEventArgs();
+                    nextButton_Click(sender, eM);
+                }
+            }
+            else
+            {
+                if (e.Key == Key.Left)
+                {
+                    RoutedEventArgs eM = new RoutedEventArgs();
+                    previousButton_Click(sender, eM);
+                }
+                else if (e.Key == Key.Right)
+                {
+                    RoutedEventArgs eM = new RoutedEventArgs();
+                    nextButton_Click(sender, eM);
+                }
+                else if (e.Key == Key.Space && mediaExtension == MediaExtension.GIF)
+                {
+                    if (isMediaPlaying)
+                    {
+                        mainMedia.Pause();
+                        isMediaPlaying = false;
+                    }
+                    else
+                    {
+                        mainMedia.Play();
+                        isMediaPlaying = true;
+                    }
+                }
+                else if (e.Key == Key.Up)
+                {
+                    if (zoomIndex != 0)//checks if the normal zoom is already on
+                    {
+                        revertZoom();
+                    }
+                    else if (!isHalfZoomStopFlip)
+                    {
+                        if (halfZoomIndex >= 0 && halfZoomIndex < maxHalfZoomIndex)
+                        {
+                            double maxHeightPossible = (mainImage.Width * mainImage.ActualHeight) / mainImage.ActualWidth;//rule of three to convert the height of the image to an equivalent of the width based of the width of the current window
+                            if (mainImage.Height < maxHeightPossible) doHalfZoomTop();//this if is to prevent the zoomIndex from increasing when the image is already filling the whole screen
+                        }
+                        else if (halfZoomIndex < 0)//this is used to zoom back
+                        {
+                            increaseHalfZoomIndex();
+                            increaseHalfZoomIndex();
+                            doHalfZoomBottom();
+                            if (halfZoomIndex == 0) preventZoomFlip();//it's used to stop for a moment the zoom 'flippig' to the opposite half of the image when it reaches index 0
+                        }
+                    }
+                }
+                else if (e.Key == Key.Down)
+                {
+                    if (zoomIndex != 0)//checks if the normal zoom is already on
+                    {
+                        revertZoom();
+                    }
+                    else if (!isHalfZoomStopFlip)
+                    {
+                        if (halfZoomIndex <= 0 && halfZoomIndex > (maxHalfZoomIndex * -1))
+                        {
+                            double maxHeightPossible = (mainImage.Width * mainImage.ActualHeight) / mainImage.ActualWidth;//rule of three to convert the height of the image to an equivalent of the width based of the width of the current window
+                            if (mainImage.Height < maxHeightPossible) doHalfZoomBottom();//this if is to prevent the zoomIndex from increasing when the image is already filling the whole screen
+                        }
+                        else if (halfZoomIndex > 0)//this is used to zoom back
+                        {
+                            decreaseHalfZoomIndex();
+                            decreaseHalfZoomIndex();
+                            doHalfZoomTop();
+                            if (halfZoomIndex == 0) preventZoomFlip();//it's used to stop for a moment the zoom 'flippig' to the opposite half of the image when it reaches index 0
+                        }
+                    }
+                }
+                else if (e.Key == Key.C && mediaExtension != MediaExtension.GIF && !isZoomed)
+                {
+                    if (!isCropEnabled)
+                    {
+                        drawFirstLine();
+                        RoutedEventArgs eM = new RoutedEventArgs();
+                        cropMode_Click(sender, eM);
+                    }
+                    else
+                    {
+                        deactivateCrop();
+                    }
+                }
+            }
+
+            if (e.Key == Key.Delete)
+            {
+                deleteFile();
+            }
+            else if (e.Key == Key.S && Keyboard.IsKeyDown(Key.LeftCtrl))
+            {
+                if (defaultMedia != null && mainImage.Source != null || mainMedia.Source != null)
+                {
+                    if (mediaType == MediaType.Video || mediaType == MediaType.Audio)
+                    {
+                        SaveMediaCopy.SaveMedia(defaultMedia);
+                    }
+                    else
+                    {
+                        SaveImageAs.SaveImage(defaultMedia);
+                    }
+                }
+            }
+            else if (e.Key == Key.X && Keyboard.IsKeyDown(Key.LeftCtrl))
+            {
+                if (defaultMedia != null && mainImage.Source != null || mainMedia.Source != null)
+                {
+                    cutMedia();
+                }
+            }
+        }
+        #endregion
+
+
         #region mainMedia_MediaOpened
         private void mainMedia_MediaOpened(object sender, RoutedEventArgs e)
         {
@@ -429,149 +573,6 @@ namespace WPFImageViewer
                 setMainMedia();
             }
             forceGC();
-        }
-        #endregion
-
-
-
-        #region mainWindow_PreviewKeyDown
-        private void mainWindow_PreviewKeyDown(object sender, KeyEventArgs e)
-        {
-            if (mediaType == MediaType.Video || mediaType == MediaType.Audio)
-            {
-                if (e.Key == Key.Space)
-                {
-                    if (isMediaPlaying)
-                    {
-                        mainMedia.Pause();
-                        isMediaPlaying = false;
-                        taskBarMedia.ProgressState = TaskbarItemProgressState.Paused;
-                    }
-                    else
-                    {
-                        mainMedia.Play();
-                        isMediaPlaying = true;
-                        taskBarMedia.ProgressState = TaskbarItemProgressState.Normal;
-                    }
-                }
-                else if (e.Key == Key.Left)
-                {
-                    RoutedEventArgs eM = new RoutedEventArgs();
-                    previousButton_Click(sender, eM);
-                }
-                else if (e.Key == Key.Right)
-                {
-                    RoutedEventArgs eM = new RoutedEventArgs();
-                    nextButton_Click(sender, eM);
-                }
-            }
-            else
-            {
-                if (e.Key == Key.Left)
-                {
-                    RoutedEventArgs eM = new RoutedEventArgs();
-                    previousButton_Click(sender, eM);
-                }
-                else if (e.Key == Key.Right)
-                {
-                    RoutedEventArgs eM = new RoutedEventArgs();
-                    nextButton_Click(sender, eM);
-                }
-                else if (e.Key == Key.Space && mediaExtension == MediaExtension.GIF)
-                {
-                    if (isMediaPlaying)
-                    {
-                        mainMedia.Pause();
-                        isMediaPlaying = false;
-                    }
-                    else
-                    {
-                        mainMedia.Play();
-                        isMediaPlaying = true;
-                    }
-                }
-                else if (e.Key == Key.Up)
-                {
-                    if (zoomIndex != 0)//checks if the normal zoom is already on
-                    {
-                        revertZoom();
-                    }
-                    else
-                    {
-                        if (halfZoomIndex >= 0 && halfZoomIndex < maxHalfZoomIndex)
-                        {
-                            double maxHeightPossible = (mainImage.Width * mainImage.ActualHeight) / mainImage.ActualWidth;//rule of three to convert the height of the image to an equivalent of the width based of the width of the current window
-                            if (mainImage.Height < maxHeightPossible) doHalfZoomTop();//this if is to prevent the zoomIndex from increasing when the image is already filling the whole screen
-                        }
-                        else if (halfZoomIndex < 0)//this is used to zoom back
-                        {
-                            increaseHalfZoomIndex();
-                            increaseHalfZoomIndex();
-                            doHalfZoomBottom();
-                        }
-                    }   
-                }
-                else if (e.Key == Key.Down)
-                {
-                    if (zoomIndex != 0)//checks if the normal zoom is already on
-                    {
-                        revertZoom();
-                    }
-                    else
-                    {
-                        if (halfZoomIndex <= 0 && halfZoomIndex > (maxHalfZoomIndex * -1))
-                        {
-                            double maxHeightPossible = (mainImage.Width * mainImage.ActualHeight) / mainImage.ActualWidth;//rule of three to convert the height of the image to an equivalent of the width based of the width of the current window
-                            if (mainImage.Height < maxHeightPossible) doHalfZoomBottom();//this if is to prevent the zoomIndex from increasing when the image is already filling the whole screen
-                        }
-                        else if (halfZoomIndex > 0)//this is used to zoom back
-                        {
-                            decreaseHalfZoomIndex();
-                            decreaseHalfZoomIndex();
-                            doHalfZoomTop();
-                        }
-                    }
-                }
-                else if (e.Key == Key.C && mediaExtension != MediaExtension.GIF && !isZoomed)
-                {
-                    if (!isCropEnabled)
-                    {
-                        drawFirstLine();
-                        RoutedEventArgs eM = new RoutedEventArgs();
-                        cropMode_Click(sender, eM);
-                    }
-                    else
-                    {
-                        deactivateCrop();
-                    }
-                }
-            }
-
-            if (e.Key == Key.Delete)
-            {
-                deleteFile();
-            }
-            else if (e.Key == Key.S && Keyboard.IsKeyDown(Key.LeftCtrl))
-            {
-                if (defaultMedia != null && mainImage.Source != null || mainMedia.Source != null)
-                {
-                    if (mediaType == MediaType.Video || mediaType == MediaType.Audio)
-                    {
-                        SaveMediaCopy.SaveMedia(defaultMedia);
-                    }
-                    else
-                    {
-                        SaveImageAs.SaveImage(defaultMedia);
-                    }     
-                }
-            }
-            else if (e.Key == Key.X && Keyboard.IsKeyDown(Key.LeftCtrl))
-            {
-                if (defaultMedia != null && mainImage.Source != null || mainMedia.Source != null)
-                {
-                    cutMedia();
-                }
-            }
         }
         #endregion
 
@@ -2000,6 +2001,7 @@ namespace WPFImageViewer
             tb.ShowDialog();
         }
 
+
         private void mediaOpened(object sender, EventArgs e)
         {
             _mediaPlayer.Position = mainMedia.Position;
@@ -2476,6 +2478,35 @@ namespace WPFImageViewer
 
 
         #region Zoom methods and events
+        bool isZoomed = false;
+        short zoomIndex = 0;
+        short halfZoomIndex = 0;
+        short zoomPercentage = 100;
+        const short maxHalfZoomIndex = 100;
+        short halfZoomIncrementPercent = 10;
+        bool isHalfZoomStopFlip = false;//If the user holds either the key up or down to zoom several times in succession it's used to stop for a moment the zoom 'flippig' to the opposite half of the image when it reaches index 0
+        CancellationTokenSource tokenSourceHalfZoom = new CancellationTokenSource();
+
+        void preventZoomFlip()
+        {
+           isHalfZoomStopFlip = true;
+        }
+
+
+        private async void allowZoomFlip()
+        {
+            try
+            {
+                await Task.Delay(300, tokenSourceHalfZoom.Token);
+                isHalfZoomStopFlip = false;
+            }
+            catch (TaskCanceledException ex)
+            {
+
+            }
+        }
+
+
         private void doClickZoom()
         {
             Point mainWindowPos = new Point(mainWindow.Left, mainWindow.Top);
@@ -2491,6 +2522,8 @@ namespace WPFImageViewer
 
         private void revertZoom()
         {
+            showTitleControls();
+            hideTitleControls();
             zoomIndex = 0;
             halfZoomIndex = 0;
             isZoomed = false;
