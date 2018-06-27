@@ -28,7 +28,9 @@ namespace WPFImageViewer
         /*int previousImageIndex = 0;*///used to navigate throught the listOfFiles variable
         public string defaultMedia = null;//holds the path of the current media
         bool isMediaPlaying = true;
+        bool isZoomed = false;
         short zoomIndex = 0;
+        short halfZoomIndex = 0;
         short zoomPercentage = 100;
         const short maxHalfZoomIndex = 100;
         short halfZoomIncrementPercent = 10;
@@ -298,26 +300,16 @@ namespace WPFImageViewer
             {
                 if (e.ChangedButton == MouseButton.Left && e.ClickCount == 2)
                 {
-                    if (zoomIndex != 0)
+                    if (isZoomed)
                     {
                         revertZoom();
                     }
                 }
                 else if (e.LeftButton == MouseButtonState.Pressed)
                 {
-                    if (zoomIndex == 0)
+                    if (!isZoomed)
                     {
-                        Point mainWindowPos = new Point(mainWindow.Left, mainWindow.Top);
-                        Point mainMediaGridDimensions = new Point(mainMediaGrid.ActualWidth, mainMediaGrid.ActualHeight);
-                        originalImageDimensions = ZoomImage.GetSourceDimensions(defaultMedia);
-
-                        //if (mainMediaGridDimensions.X < originalImageDimensions[0] || mainMediaGridDimensions.Y < originalImageDimensions[1])
-                        //{
-                            ZoomImage.PerformeZoom(mainImage, ImageBackGround, defaultMedia, WindowState, mainWindowPos, mainMediaGridDimensions, zoomPercentage);
-                            zoomIndex++;
-                            hideControlsZoom();
-                            mainImage.Cursor = Cursors.Hand;
-                        //}
+                        doClickZoom();
                     }
                     else
                     {
@@ -500,36 +492,47 @@ namespace WPFImageViewer
                 }
                 else if (e.Key == Key.Up)
                 {
-                    if (zoomIndex >= 0 && zoomIndex < maxHalfZoomIndex)
+                    if (zoomIndex != 0)//checks if the normal zoom is already on
                     {
-                        double maxHeightPossible = (mainImage.Width * mainImage.ActualHeight) / mainImage.ActualWidth;//rule of three to convert the height of the image to an equivalent of the width based of the width of the current window
-                        if(mainImage.Height < maxHeightPossible) doHalfZoomTop();//this if is to prevent the zoomIndex from increasing when the image is already filling the whole screen
+                        revertZoom();
                     }
-                    else if (zoomIndex < 0)//this is used to zoom back
+                    else
                     {
-                        zoomIndex++;
-                        zoomIndex++;
-                        doHalfZoomBottom();
-                        if (zoomIndex == 0) revertZoom();//re-enables controls after zoomIndex 'reverts' back to 0
-                    }
-
+                        if (halfZoomIndex >= 0 && halfZoomIndex < maxHalfZoomIndex)
+                        {
+                            double maxHeightPossible = (mainImage.Width * mainImage.ActualHeight) / mainImage.ActualWidth;//rule of three to convert the height of the image to an equivalent of the width based of the width of the current window
+                            if (mainImage.Height < maxHeightPossible) doHalfZoomTop();//this if is to prevent the zoomIndex from increasing when the image is already filling the whole screen
+                        }
+                        else if (halfZoomIndex < 0)//this is used to zoom back
+                        {
+                            increaseHalfZoomIndex();
+                            increaseHalfZoomIndex();
+                            doHalfZoomBottom();
+                        }
+                    }   
                 }
                 else if (e.Key == Key.Down)
                 {
-                    if (zoomIndex <= 0 && zoomIndex > (maxHalfZoomIndex * -1))
+                    if (zoomIndex != 0)//checks if the normal zoom is already on
                     {
-                        double maxHeightPossible = (mainImage.Width * mainImage.ActualHeight) / mainImage.ActualWidth;//rule of three to convert the height of the image to an equivalent of the width based of the width of the current window
-                        if (mainImage.Height < maxHeightPossible) doHalfZoomBottom();//this if is to prevent the zoomIndex from increasing when the image is already filling the whole screen
+                        revertZoom();
                     }
-                    else if (zoomIndex > 0)//this is used to zoom back
+                    else
                     {
-                        zoomIndex--;
-                        zoomIndex--;
-                        doHalfZoomTop();
-                        if (zoomIndex == 0) revertZoom();//re-enables controls after zoomIndex 'reverts' back to 0
+                        if (halfZoomIndex <= 0 && halfZoomIndex > (maxHalfZoomIndex * -1))
+                        {
+                            double maxHeightPossible = (mainImage.Width * mainImage.ActualHeight) / mainImage.ActualWidth;//rule of three to convert the height of the image to an equivalent of the width based of the width of the current window
+                            if (mainImage.Height < maxHeightPossible) doHalfZoomBottom();//this if is to prevent the zoomIndex from increasing when the image is already filling the whole screen
+                        }
+                        else if (halfZoomIndex > 0)//this is used to zoom back
+                        {
+                            decreaseHalfZoomIndex();
+                            decreaseHalfZoomIndex();
+                            doHalfZoomTop();
+                        }
                     }
                 }
-                else if (e.Key == Key.C && mediaExtension != MediaExtension.GIF && zoomIndex == 0)
+                else if (e.Key == Key.C && mediaExtension != MediaExtension.GIF && !isZoomed)
                 {
                     if (!isCropEnabled)
                     {
@@ -694,7 +697,7 @@ namespace WPFImageViewer
 
         private void mainMediaGrid_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            if (zoomIndex == 0)
+            if (!isZoomed)
             {
                 mainImage.Width = mainMediaGrid.ActualWidth;
                 mainImage.Height = mainMediaGrid.ActualHeight;
@@ -724,7 +727,7 @@ namespace WPFImageViewer
 
         private void cropMode_Click(object sender, RoutedEventArgs e)
         {
-            if (zoomIndex == 0)
+            if (!isZoomed)
             {
                 drawFirstLine();
                 Mouse.Capture(mainImage);
@@ -808,48 +811,6 @@ namespace WPFImageViewer
 
 
         #region Generic methods
-        #region Half zoom
-        void doHalfZoomTop()
-        {
-            Point mainWindowDimensions = new Point(mainWindow.ActualWidth, mainWindow.ActualHeight);
-            originalImageDimensions = ZoomImage.GetSourceDimensions(defaultMedia);
-
-            if (originalImageDimensions[0] < originalImageDimensions[1] && mainWindowDimensions.X > mainWindowDimensions.Y)//DO NOT REMOVE THIS IF
-            {
-                zoomIndex++;
-                ZoomImage.PerformZoomTop(mainImage, ImageBackGround, mainWindowDimensions, zoomIndex, halfZoomIncrementPercent);
-                hideControlsZoom();
-                mainImage.Cursor = Cursors.Hand;
-
-                if (WindowState == WindowState.Normal)
-                {
-                    ResizeMode = ResizeMode.CanMinimize;
-                }
-            }
-        }
-
-
-        void doHalfZoomBottom()
-        {
-            Point mainWindowDimensions = new Point(mainWindow.ActualWidth, mainWindow.ActualHeight);
-            originalImageDimensions = ZoomImage.GetSourceDimensions(defaultMedia);
-
-            if (originalImageDimensions[0] < originalImageDimensions[1] && mainWindowDimensions.X > mainWindowDimensions.Y)//DO NOT REMOVE THIS IF
-            {
-                zoomIndex--;
-                ZoomImage.PerformZoomBottom(mainImage, ImageBackGround, mainWindowDimensions, zoomIndex, halfZoomIncrementPercent);
-                hideControlsZoom();
-                mainImage.Cursor = Cursors.Hand;
-
-                if (WindowState == WindowState.Normal)
-                {
-                    ResizeMode = ResizeMode.CanMinimize;
-                }
-            }
-        }
-        #endregion
-
-
         private void changeMaximizeButton()
         {
             if (WindowState == WindowState.Maximized)
@@ -947,7 +908,7 @@ namespace WPFImageViewer
             showTitleControls();
             hideTitleControls();
 
-            if (zoomIndex != 0)
+            if (isZoomed)
             {
                 revertZoom();
             }
@@ -1083,15 +1044,6 @@ namespace WPFImageViewer
             }
         }
         #endregion
-
-
-        private void revertZoom()
-        {
-            zoomIndex = 0;
-            ZoomImage.RevertZoom(mainImage, ImageBackGround, mainMediaGrid, defaultMedia);
-            showControlsZoom();
-            mainImage.Cursor = Cursors.Arrow;
-        }
 
 
         private void openPicture()
@@ -2520,6 +2472,137 @@ namespace WPFImageViewer
         {
             cutMedia();
         }
+        #endregion
+
+
+        #region Zoom methods and events
+        private void doClickZoom()
+        {
+            Point mainWindowPos = new Point(mainWindow.Left, mainWindow.Top);
+            Point mainMediaGridDimensions = new Point(mainMediaGrid.ActualWidth, mainMediaGrid.ActualHeight);
+            originalImageDimensions = ZoomImage.GetSourceDimensions(defaultMedia);
+
+            increaseZoomIndex();
+            ZoomImage.PerformeZoom(mainImage, ImageBackGround, defaultMedia, WindowState, mainWindowPos, mainMediaGridDimensions, zoomPercentage);
+            hideControlsZoom();
+            mainImage.Cursor = Cursors.Hand;
+        }
+
+
+        private void revertZoom()
+        {
+            zoomIndex = 0;
+            halfZoomIndex = 0;
+            isZoomed = false;
+            ZoomImage.RevertZoom(mainImage, ImageBackGround, mainMediaGrid, defaultMedia);
+            showControlsZoom();
+            mainImage.Cursor = Cursors.Arrow;
+        }
+
+
+        void doHalfZoomTop()
+        {
+            Point mainWindowDimensions = new Point(mainWindow.ActualWidth, mainWindow.ActualHeight);
+            originalImageDimensions = ZoomImage.GetSourceDimensions(defaultMedia);
+
+            if (originalImageDimensions[0] < originalImageDimensions[1] && mainWindowDimensions.X > mainWindowDimensions.Y)//DO NOT REMOVE THIS IF
+            {
+                increaseHalfZoomIndex();
+                if (isZoomed)
+                {
+                    ZoomImage.PerformZoomTop(mainImage, ImageBackGround, mainWindowDimensions, halfZoomIndex, halfZoomIncrementPercent);
+                    hideControlsZoom();
+                    mainImage.Cursor = Cursors.Hand;
+
+                    if (WindowState == WindowState.Normal) ResizeMode = ResizeMode.CanMinimize;
+                }
+            }
+        }
+
+
+        void doHalfZoomBottom()
+        {
+            Point mainWindowDimensions = new Point(mainWindow.ActualWidth, mainWindow.ActualHeight);
+            originalImageDimensions = ZoomImage.GetSourceDimensions(defaultMedia);
+
+            if (originalImageDimensions[0] < originalImageDimensions[1] && mainWindowDimensions.X > mainWindowDimensions.Y)//DO NOT REMOVE THIS IF
+            {
+                decreaseHalfZoomIndex();
+
+                if (isZoomed)
+                {
+                    ZoomImage.PerformZoomBottom(mainImage, ImageBackGround, mainWindowDimensions, halfZoomIndex, halfZoomIncrementPercent);
+                    hideControlsZoom();
+                    mainImage.Cursor = Cursors.Hand;
+
+                    if (WindowState == WindowState.Normal) ResizeMode = ResizeMode.CanMinimize;
+                }
+            }
+        }
+
+
+        private void increaseZoomIndex()
+        {
+            zoomIndex++;
+            halfZoomIndex = 0;
+
+            if (zoomIndex != 0)
+            {
+                isZoomed = true;
+            }
+            else
+            {
+                revertZoom();
+            }
+        }
+
+
+        private void decreaseZoomIndex()
+        {
+            zoomIndex--;
+            halfZoomIndex = 0;
+
+            if (zoomIndex != 0)
+            {
+                isZoomed = true;
+            }
+            else
+            {
+                revertZoom();
+            }
+        }
+
+
+        private void increaseHalfZoomIndex()
+        {
+            halfZoomIndex++;
+            zoomIndex = 0;
+
+            if (halfZoomIndex != 0)
+            {
+                isZoomed = true;
+            }
+            else
+            {
+                revertZoom();
+            }
+        }
+
+
+        private void decreaseHalfZoomIndex()
+        {
+            halfZoomIndex--;
+            zoomIndex = 0;
+
+            if (halfZoomIndex != 0)
+            {
+                isZoomed = true;
+            }
+            else
+            {
+                revertZoom();
+            }
+        } 
         #endregion
     }
 }
