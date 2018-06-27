@@ -2557,20 +2557,20 @@ namespace WPFImageViewer
         }
 
 
-        private void decreaseZoomIndex()
-        {
-            zoomIndex--;
-            halfZoomIndex = 0;
+        //private void decreaseZoomIndex()
+        //{
+        //    zoomIndex--;
+        //    halfZoomIndex = 0;
 
-            if (zoomIndex != 0)
-            {
-                isZoomed = true;
-            }
-            else
-            {
-                revertZoom();
-            }
-        }
+        //    if (zoomIndex != 0)
+        //    {
+        //        isZoomed = true;
+        //    }
+        //    else
+        //    {
+        //        revertZoom();
+        //    }
+        //}
 
 
         private void increaseHalfZoomIndex()
