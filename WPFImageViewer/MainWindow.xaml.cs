@@ -2485,7 +2485,6 @@ namespace WPFImageViewer
         const short maxHalfZoomIndex = 100;
         short halfZoomIncrementPercent = 10;
         bool isHalfZoomStopFlip = false;//If the user holds either the key up or down to zoom several times in succession it's used to stop for a moment the zoom 'flippig' to the opposite half of the image when it reaches index 0
-        CancellationTokenSource tokenSourceHalfZoom = new CancellationTokenSource();
 
         void preventZoomFlip()
         {
@@ -2493,17 +2492,9 @@ namespace WPFImageViewer
         }
 
 
-        private async void allowZoomFlip()
+        void allowZoomFlip()
         {
-            try
-            {
-                await Task.Delay(300, tokenSourceHalfZoom.Token);
-                isHalfZoomStopFlip = false;
-            }
-            catch (TaskCanceledException ex)
-            {
-
-            }
+             isHalfZoomStopFlip = false;
         }
 
 
