@@ -156,7 +156,7 @@ namespace WPFImageViewer
                     {
                         revertZoom();
                     }
-                    else if (!isHalfZoomStopFlip)
+                    else if (!isHalfZoomStopFlip && !isCropEnabled)
                     {
                         if (halfZoomIndex >= 0 && halfZoomIndex < maxHalfZoomIndex)
                         {
@@ -178,7 +178,7 @@ namespace WPFImageViewer
                     {
                         revertZoom();
                     }
-                    else if (!isHalfZoomStopFlip)
+                    else if (!isHalfZoomStopFlip && !isCropEnabled)
                     {
                         if (halfZoomIndex <= 0 && halfZoomIndex > (maxHalfZoomIndex * -1))
                         {
