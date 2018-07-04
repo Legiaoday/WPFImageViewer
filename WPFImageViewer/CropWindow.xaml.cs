@@ -23,6 +23,7 @@ namespace WPFImageViewer
                 InitializeComponent();
                 Width = SystemParameters.PrimaryScreenWidth / 2;
                 Height = SystemParameters.PrimaryScreenHeight / 2;
+                RenderOptions.SetBitmapScalingMode(croppedImage, BitmapScalingMode.NearestNeighbor);//scaling mode. BitmapScalingMode.NearestNeighbor disables the smoothing when zooming the image
                 croppedImage.Source = bitmapImage;
                 globalMainWindow = mainWindow;
 
