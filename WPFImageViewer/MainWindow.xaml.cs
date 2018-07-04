@@ -975,7 +975,7 @@ namespace WPFImageViewer
             hideVideoControls();
             lblVolume.Content = Convert.ToUInt32(volumeSlider.Value);
             taskBarMedia.ProgressState = TaskbarItemProgressState.Normal;
-            RenderOptions.SetBitmapScalingMode(mainImage, BitmapScalingMode.NearestNeighbor);//scaling mode. BitmapScalingMode.NearestNeighbor disables the smoothing when zooming the image
+            RenderOptions.SetBitmapScalingMode(mainImage, BitmapScalingMode.LowQuality);//scaling mode. BitmapScalingMode.NearestNeighbor disables the smoothing when zooming the image
 
             timer = new DispatcherTimer();
             timer.Interval = TimeSpan.FromMilliseconds(200);
