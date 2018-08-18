@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:WPFImageViewer"
         mc:Ignorable="d"
         Title="WPFImageViewer" Height="360" Width="640" WindowStartupLocation="CenterScreen" MinWidth="409" MinHeight="230" Icon="multimedia.ico"
-        PreviewKeyDown="mainWindow_PreviewKeyDown" PreviewKeyUp="mainWindow_PreviewKeyUp" WindowStyle="None" StateChanged="mainWindow_StateChanged" AllowsTransparency="True" ResizeMode="CanMinimize" Closing="mainWindow_Closing" Loaded="mainWindow_Loaded"
+        PreviewKeyDown="mainWindow_PreviewKeyDown" PreviewKeyUp="mainWindow_PreviewKeyUp" WindowStyle="None" AllowsTransparency="True" ResizeMode="CanMinimize" Closing="mainWindow_Closing" Loaded="mainWindow_Loaded"
         SizeChanged="mainWindow_SizeChanged" LocationChanged="mainWindow_LocationChanged" Deactivated="mainWindow_Deactivated" MouseMove="mainWindow_MouseMove">
     <Window.Background>
         <SolidColorBrush Opacity="0.9" Color="#FF171717"/>
@@ -114,20 +114,6 @@
                 <Grid.Background>
                     <SolidColorBrush Opacity="1" Color="White"/>
                 </Grid.Background>
-            </Grid>
-        </Grid>
-        <Grid x:Name="titleBarGrid" Background="Transparent" Height="21" VerticalAlignment="Top" MouseEnter="titleBarGrid_MouseEnter" MouseLeave="titleBarGrid_MouseLeave">
-            <Grid x:Name="titleBarGridWhite" Background="Transparent" Height="21" VerticalAlignment="Top">
-                <Grid x:Name="backGid" Opacity="0.5" Background="#FF171717" HorizontalAlignment="Right" Width="86"/>
-                <Label x:Name="lblFileName" Margin="0,-6,86,0" IsHitTestVisible="False" FontSize="12" Foreground="White" HorizontalContentAlignment="Center" Height="27" VerticalAlignment="Center">
-                    <Label.Background>
-                        <SolidColorBrush Opacity="0.5" Color="#FF171717"/>
-                    </Label.Background>
-                </Label>
-                <Grid x:Name="dragGrid" Background="Transparent" Cursor="SizeAll" PreviewMouseDown="dragGrid_PreviewMouseDown" Margin="0,0,86,0"/>
-                <Button x:Name="closeButton" FontFamily="Marlett" FontSize="16" Content="r"  Margin="0,0,0,0" Focusable="False" Click="closeButton_Click" HorizontalAlignment="Right" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" Background="#FFFF3737" VerticalAlignment="Stretch" Width="28"/>
-                <Button x:Name="maximizeButton" FontFamily="Marlett" FontSize="16" Content="1" HorizontalContentAlignment="Center" Margin="0,0,29,0" Focusable="False" Click="maximizeButton_Click" HorizontalAlignment="Right" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" Background="#FF2D8CFF" VerticalAlignment="Stretch" Width="28"/>
-                <Button x:Name="minimizeButton" FontFamily="Marlett" FontSize="16" Content="0" HorizontalContentAlignment="Center" Margin="0,0,58,0" Focusable="False" Click="minimizeButton_Click" HorizontalAlignment="Right" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" Background="#ffcc00" VerticalAlignment="Stretch" Width="28"/>
             </Grid>
         </Grid>
         <Grid x:Name="nextButtonGrid" Margin="0,0,0,0" HorizontalAlignment="Right" Width="32" Height="122" Background="Transparent" MouseEnter="nextButtonGrid_MouseEnter" MouseLeave="nextButtonGrid_MouseLeave">

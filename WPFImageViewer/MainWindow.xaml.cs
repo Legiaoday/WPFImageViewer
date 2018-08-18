@@ -15,6 +15,7 @@ using System.Windows.Shell;
 using System.Windows.Threading;
 using System.Globalization;
 using Microsoft.VisualBasic.FileIO;
+using MyControlsLibrary;
 #endregion
 
 namespace WPFImageViewer
@@ -74,18 +75,18 @@ namespace WPFImageViewer
         MediaType mediaType;
         MediaExtension mediaExtension;
         public int[] originalXY;
+        CustomTitleBar titleBar;
         #endregion
-
 
         public MainWindow(string[] args)
         {
             InitializeComponent();
+            initTitleBar();
             loadConfigs(args);
             //#if DEBUG
             //initializeDebug(); 
             //#endif
         }
-
 
         #region Generic events
         private void mainWindow_PreviewKeyUp(object sender, KeyEventArgs e)
@@ -602,18 +603,6 @@ namespace WPFImageViewer
         }
 
 
-        private void titleBarGrid_MouseLeave(object sender, MouseEventArgs e)
-        {
-            hideTitleControls();
-        }
-
-
-        private void titleBarGrid_MouseEnter(object sender, MouseEventArgs e)
-        {
-            showTitleControls();
-        }
-
-
         private void navigationGrid_MouseEnter(object sender, MouseEventArgs e)
         {
             showNavigationControls();
@@ -706,15 +695,6 @@ namespace WPFImageViewer
         }
 
 
-        private void dragGrid_PreviewMouseDown(object sender, MouseButtonEventArgs e)
-        {
-            if (e.ChangedButton == MouseButton.Left)
-            {
-                this.DragMove();
-            }
-        }
-
-
         private void mainImage_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             ImageBackGround.Width = mainImage.ActualWidth;
@@ -776,13 +756,6 @@ namespace WPFImageViewer
         }
 
 
-        private void mainWindow_StateChanged(object sender, EventArgs e)
-        {
-            dragGrid.Visibility = Visibility.Collapsed;
-            changeMaximizeButton();
-        }
-
-
         #region backgroundMenuItem_Click
         private void backgroundMenuItem_Click(object sender, RoutedEventArgs e)
         {
@@ -810,19 +783,7 @@ namespace WPFImageViewer
         #endregion
         #endregion
 
-
         #region Generic methods
-        private void changeMaximizeButton()
-        {
-            if (WindowState == WindowState.Maximized)
-            {
-                maximizeButton.Content = 2;
-            }
-            else if (WindowState == WindowState.Normal)
-            {
-                maximizeButton.Content = 1;
-            }
-        }
 
 
         #region setMainMedia
@@ -837,7 +798,7 @@ namespace WPFImageViewer
             getMediaType();
             if (isMediaPlaying && mediaType == MediaType.Image) { loading.StopAnimation(); }
             isMediaPlaying = false;
-            lblFileName.Content = null;
+            titleBar.Text = null;
             #endregion
 
             try
@@ -904,10 +865,10 @@ namespace WPFImageViewer
             }
 
             Title = fileName;
-            lblFileName.Content = fileName + " (" + (defaultImageIndex + 1) + "/" + listOfFiles.Count + ")";
+            titleBar.Text = fileName + " (" + (defaultImageIndex + 1) + "/" + listOfFiles.Count + ")";
             hideVideoControls();
-            showTitleControls();
-            hideTitleControls();
+            titleBar.ShowControl();
+            titleBar.HideControl();
 
             if (isZoomed)
             {
@@ -963,12 +924,10 @@ namespace WPFImageViewer
             rectangle.Stroke = Brushes.Red;
             rectangle.Fill = new SolidColorBrush() { Color = Colors.BlueViolet, Opacity = 0.25f };
 
-            hideTitleControls();
-            changeMaximizeButton();//the window_StateChanged is being skipped on the startup because of the style of the window so this method is also being called here
+            //changeMaximizeButton();//the window_StateChanged is being skipped on the startup because of the style of the window so this method is also being called here
             zoomMenuItem.Header = "Zoom (" + zoomPercentage + "%)";
             zoomStepMenuItem.Header = "Zoom Step (" + halfZoomIncrementPercent + "%)";
             navigationGridWhite.Visibility = Visibility.Collapsed;
-            dragGrid.Visibility = Visibility.Collapsed;
             hideNextButton();
             hidePreviousButton();
             hideVolumeControls();
@@ -1036,7 +995,7 @@ namespace WPFImageViewer
                     }
 
                     setCurrentImageIndex();
-                    lblFileName.Content = System.IO.Path.GetFileName(defaultMedia) + " (" + (defaultImageIndex + 1) + "/" + listOfFiles.Count + ")";
+                    titleBar.Text = System.IO.Path.GetFileName(defaultMedia) + " (" + (defaultImageIndex + 1) + "/" + listOfFiles.Count + ")";
                 }
                 catch (Exception ex)
                 {
@@ -1148,22 +1107,6 @@ namespace WPFImageViewer
 
 
         #region Hide/show controls
-        private async void hideTitleControls()
-        {
-            try
-            {
-                await Task.Delay(2000, tokenSourceTitle.Token);
-
-                titleBarGridWhite.Visibility = Visibility.Collapsed;
-                dragGrid.Visibility = Visibility.Collapsed;
-            }
-            catch (TaskCanceledException ex)
-            {
-
-            }
-        }
-
-
         private async void hideNavigationControls()
         {
             try
@@ -1176,19 +1119,6 @@ namespace WPFImageViewer
 
             }
         }
-
-
-        private void showTitleControls()
-        {
-            canceLTokenTitle();
-            titleBarGridWhite.Visibility = Visibility.Visible;
-            lblFileName.Visibility = Visibility.Visible;
-            if (WindowState == WindowState.Normal)
-            {
-                dragGrid.Visibility = Visibility.Visible;
-            }
-        }
-
 
 
         private void showNavigationControls()
@@ -1222,7 +1152,7 @@ namespace WPFImageViewer
 
         private void hideControlsZoom()
         {
-            titleBarGrid.Visibility = Visibility.Collapsed;
+            titleBar.Visibility = Visibility.Collapsed;
             navigationGrid.Visibility = Visibility.Collapsed;
             nextButtonGrid.Visibility = Visibility.Collapsed;
             previousButtonGrid.Visibility = Visibility.Collapsed;
@@ -1232,7 +1162,7 @@ namespace WPFImageViewer
 
         private void showControlsZoom()
         {
-            titleBarGrid.Visibility = Visibility.Visible;
+            titleBar.Visibility = Visibility.Visible;
             navigationGrid.Visibility = Visibility.Visible;
             nextButtonGrid.Visibility = Visibility.Visible;
             previousButtonGrid.Visibility = Visibility.Visible;
@@ -1316,7 +1246,6 @@ namespace WPFImageViewer
             showControlsZoom();
         }
         #endregion
-
 
         #region Checkable menus
         #region Zoom checkables
@@ -1654,8 +1583,8 @@ namespace WPFImageViewer
                 orderBPreventLoop = false;
                 if (!isSettingsChanged && isInitResize) isSettingsChanged = true;
                 getFolderMedia();
-                showTitleControls();
-                hideTitleControls();
+                titleBar.ShowControl();
+                titleBar.HideControl();
             }
         }
 
@@ -1744,7 +1673,6 @@ namespace WPFImageViewer
         #endregion
         #endregion
 
-
         #region Grip resize window
         private void gripGrid_MouseEnter(object sender, MouseEventArgs e)
         {
@@ -1831,7 +1759,6 @@ namespace WPFImageViewer
             //#endif
         }
         #endregion
-
 
         #region Old stuff
         #region Media current position popup
@@ -2072,7 +1999,6 @@ namespace WPFImageViewer
         #endregion
         #endregion
 
-
         #region Delete file
         private void deleteFile_PreviewMouseDown(object sender, MouseButtonEventArgs e)
         {
@@ -2101,7 +2027,7 @@ namespace WPFImageViewer
 
         private void cleanAAndDel()
         {
-            lblFileName.Content = null;
+            titleBar.Text = null;
             fileName = null;
 
             if (mediaType == MediaType.Video || mediaExtension == MediaExtension.GIF || mediaType == MediaType.Audio)
@@ -2199,7 +2125,6 @@ namespace WPFImageViewer
             }
         }
         #endregion
-
 
         #region Crop size label
         Label coordLbl;
@@ -2436,7 +2361,6 @@ namespace WPFImageViewer
         }
         #endregion
 
-
         #region Cut media
         private void cutMedia()
         {
@@ -2477,7 +2401,6 @@ namespace WPFImageViewer
         }
         #endregion
 
-
         #region Zoom methods and events
         bool isZoomed = false;
         short zoomIndex = 0;
@@ -2514,13 +2437,13 @@ namespace WPFImageViewer
 
         private void revertZoom()
         {
-            showTitleControls();
-            hideTitleControls();
             zoomIndex = 0;
             halfZoomIndex = 0;
             isZoomed = false;
             ZoomImage.RevertZoom(mainImage, ImageBackGround, mainMediaGrid, defaultMedia);
             showControlsZoom();
+            titleBar.ShowControl();
+            titleBar.HideControl();
             mainImage.Cursor = Cursors.Arrow;
         }
 
@@ -2627,7 +2550,25 @@ namespace WPFImageViewer
             {
                 revertZoom();
             }
-        } 
+        }
         #endregion
+
+        private void initTitleBar()
+        {
+            titleBar = new CustomTitleBar(this, mainGrid);//overloaded function that also accepts an icon as parameter, this icon parameter is optional
+            titleBar.Text = "";
+            titleBar.TextAlignment = HorizontalAlignment.Center;
+            titleBar.Height = 22;//recommended height = 22
+            titleBar.IsAutoHide = true;
+            titleBar.AutoHideDelay = 4000;
+            titleBar.IsPlayAnimation = true;
+            titleBar.AnimationInterval = 15;
+            titleBar.SetBackgroundColorHex("#383838");//00 = black, ff = white
+            titleBar.BackgroundOpacity = 0.7;
+            titleBar.WindowDragMode = CustomTitleBar.DragMode.Both;
+            titleBar.DoubleClickResize = true;
+            titleBar.FullScreenMode = true;
+            titleBar.TextColor = Brushes.White;
+        }
     }
 }

@@ -43,7 +43,6 @@ namespace WPFImageViewer
             }
         }
 
-
         #region Flip
         private void flipImage(short flipH, short flipV)
         {
@@ -73,7 +72,6 @@ namespace WPFImageViewer
             flipImage(1,-1);
         }
         #endregion
-
 
         #region Invert colors
         private void invert_Click(object sender, RoutedEventArgs e)
@@ -137,7 +135,6 @@ namespace WPFImageViewer
         }
         #endregion
 
-
         #region Rotate
         private void rotateImage(short angle)
         {
@@ -173,7 +170,6 @@ namespace WPFImageViewer
             rotateImage(180);
         }
         #endregion
-
 
         #region saveCrop_Click
         private void saveCrop_Click(object sender, RoutedEventArgs e)
@@ -250,7 +246,6 @@ namespace WPFImageViewer
         }
         #endregion
 
-
         #region setImageFromStream
         private void setImageFromStream()
         {
@@ -265,7 +260,6 @@ namespace WPFImageViewer
             globalMainWindow.mainImage.Source = bitmapImage;  // Finally, set the WPF Image component's source to the BitmapImage 
         }
         #endregion
-
 
         #region Generic events
         private void maximizeButton_Click(object sender, RoutedEventArgs e)
@@ -310,7 +304,6 @@ namespace WPFImageViewer
             }
         }
         #endregion
-
 
         #region Resize crop
         int[] bkpWidthHeight;

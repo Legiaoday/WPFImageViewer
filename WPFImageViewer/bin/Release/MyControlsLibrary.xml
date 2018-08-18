@@ -1,0 +1,123 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>MyControlsLibrary</name>
+    </assembly>
+    <members>
+        <member name="T:MyControlsLibrary.CustomTitleBar">
+            <summary>
+            CustomTitleBar
+            </summary>
+        </member>
+        <member name="M:MyControlsLibrary.CustomTitleBar.#ctor(System.Windows.Window,System.Windows.Controls.Grid)">
+            <summary>Creates a new title bar control to be used within another window with a grid as its first child.</summary>
+        </member>
+        <member name="M:MyControlsLibrary.CustomTitleBar.#ctor(System.Windows.Window,System.Windows.Controls.Grid,System.String)">
+            <summary>
+            Creates a new title bar control to be used within another window with a grid as its first child and an icon.
+            <para>The icon must be a local resource name in the parent window's project (e.g. "icon.ico"). If no icon with the given name is found then the title bar will try to extract the icon from its parent window's assembly.</para>
+            </summary>
+        </member>
+        <member name="F:MyControlsLibrary.CustomTitleBar.IsDraggingWindow">
+            <summary>Indicates if the control is being dragged around by the user.</summary>
+        </member>
+        <member name="P:MyControlsLibrary.CustomTitleBar.IsPlayAnimation">
+            <summary>Sets if the control will have an animation when hiding/showing the control.</summary>
+        </member>
+        <member name="F:MyControlsLibrary.CustomTitleBar.AnimationInterval">
+            <summary>Sets how fast the animation plays in milliseconds. Lower values = fast animation, higher values = slow animation. Default value = 25.</summary>
+        </member>
+        <member name="P:MyControlsLibrary.CustomTitleBar.IsAutoHide">
+            <summary>Sets if the control will auto hide after a certain period of time.</summary>
+        </member>
+        <member name="F:MyControlsLibrary.CustomTitleBar.AutoHideDelay">
+            <summary>Time in milliseconds that will pass before the control auto hides.</summary>
+        </member>
+        <member name="M:MyControlsLibrary.CustomTitleBar.HideControl">
+            <summary>Hides the control.</summary>
+        </member>
+        <member name="M:MyControlsLibrary.CustomTitleBar.ShowControl">
+            <summary>Shows the control.</summary>
+        </member>
+        <member name="P:MyControlsLibrary.CustomTitleBar.BackgroundOpacity">
+            <summary>
+            Transparency value of the background. Values between 0 and 1, where 0 = completely transparent and 1 = completely opaque. For it to work the parent window AllowsTransparency property must be set to true.
+            <para>The AllowsTransparency property of a WPF window can only be set if the window has not been shown yet.</para>
+            </summary>
+        </member>
+        <member name="P:MyControlsLibrary.CustomTitleBar.BackgroundColor">
+            <summary>Background color of the title bar.</summary>
+        </member>
+        <member name="M:MyControlsLibrary.CustomTitleBar.SetBackgroundColorHex(System.String)">
+            <summary>
+            Sets the background color based on a hexadecimal color code. The color code is composed of four sets of two hexadecimal numbers like for example: #FF0fa7ff
+            <para>The first two digits being the alpha transparency (FF), the third and fourth being the red (0f), the fifth and sixty being the green (a7) and the seventh and eighth being the blue (ff). You can omit the transparency if you wish.</para>
+            </summary>
+        </member>
+        <member name="P:MyControlsLibrary.CustomTitleBar.TextColor">
+            <summary>Text color of the title bar.</summary>
+        </member>
+        <member name="M:MyControlsLibrary.CustomTitleBar.SetTextColorHex(System.String)">
+            <summary>
+            Sets the text color based on a hexadecimal color code. The color code is composed of four sets of two hexadecimal numbers like for example: #FF0fa7ff
+            <para>The first two digits being the alpha transparency (FF), the third and fourth being the red (0f), the fifth and sixty being the green (a7) and the seventh and eighth being the blue (ff). You can omit the transparency if you wish.</para>
+            </summary>
+        </member>
+        <member name="P:MyControlsLibrary.CustomTitleBar.DoubleClickResize">
+            <summary>Indicates whether or not it should change the state of the window when the title bar is double clicked.</summary>
+        </member>
+        <member name="P:MyControlsLibrary.CustomTitleBar.Text">
+            <summary>Text to be displayed in the title bar.</summary>
+        </member>
+        <member name="P:MyControlsLibrary.CustomTitleBar.TextAlignment">
+            <summary>Title bar's text alignment.</summary>
+        </member>
+        <member name="P:MyControlsLibrary.CustomTitleBar.MinimizeButtonVisibility">
+            <summary>Changes the visibility of the minimize button.</summary>
+        </member>
+        <member name="P:MyControlsLibrary.CustomTitleBar.MaximizeButtonVisibility">
+            <summary>Changes the visibility of the maximize button.</summary>
+        </member>
+        <member name="P:MyControlsLibrary.CustomTitleBar.CloseButtonVisibility">
+            <summary>Changes the visibility of the close button.</summary>
+        </member>
+        <member name="F:MyControlsLibrary.CustomTitleBar.DragMode.None">
+            <summary>The window cannot be dragged at all.</summary>
+        </member>
+        <member name="F:MyControlsLibrary.CustomTitleBar.DragMode.Normal">
+            <summary>The window can only be dragged when its state is set to normal.</summary>
+        </member>
+        <member name="F:MyControlsLibrary.CustomTitleBar.DragMode.Maximized">
+            <summary>The window can only initiate drag when its state is set to maximized.</summary>
+        </member>
+        <member name="F:MyControlsLibrary.CustomTitleBar.DragMode.Both">
+            <summary>The window can be dragged when in both normal and maximized states.</summary>
+        </member>
+        <member name="P:MyControlsLibrary.CustomTitleBar.FullScreenMode">
+            <summary>If fullscreen mode is enabled when maximized the window will cover the whole screen, including the taskbar.</summary>
+        </member>
+        <member name="F:MyControlsLibrary.CustomTitleBar.POINT.x">
+            <summary>x coordinate of point.</summary>
+        </member>
+        <member name="F:MyControlsLibrary.CustomTitleBar.POINT.y">
+            <summary>y coordinate of point.</summary>
+        </member>
+        <member name="M:MyControlsLibrary.CustomTitleBar.POINT.#ctor(System.Int32,System.Int32)">
+            <summary>Construct a point of coordinates (x,y).</summary>
+        </member>
+        <member name="M:MyControlsLibrary.CustomTitleBar.RECT.GetHashCode">
+            <summary>Return the HashCode for this struct (not garanteed to be unique)</summary>
+        </member>
+        <member name="M:MyControlsLibrary.CustomTitleBar.RECT.op_Equality(MyControlsLibrary.CustomTitleBar.RECT,MyControlsLibrary.CustomTitleBar.RECT)">
+            <summary> Determine if 2 RECT are equal (deep compare)</summary>
+        </member>
+        <member name="M:MyControlsLibrary.CustomTitleBar.RECT.op_Inequality(MyControlsLibrary.CustomTitleBar.RECT,MyControlsLibrary.CustomTitleBar.RECT)">
+            <summary> Determine if 2 RECT are different(deep compare)</summary>
+        </member>
+        <member name="M:MyControlsLibrary.CustomTitleBar.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
+    </members>
+</doc>
