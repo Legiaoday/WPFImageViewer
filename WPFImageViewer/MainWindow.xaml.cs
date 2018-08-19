@@ -795,7 +795,7 @@ namespace WPFImageViewer
             titleBar.IsPlayAnimation = true;
             titleBar.AnimationInterval = 15;
             titleBar.SetBackgroundColorHex("#383838");//00 = black, ff = white
-            titleBar.BackgroundOpacity = 0.7;
+            titleBar.BackgroundOpacity = 0.6;
             titleBar.WindowDragMode = CustomTitleBar.DragMode.Both;
             titleBar.DoubleClickResize = true;
             titleBar.FullScreenMode = true;
@@ -1160,7 +1160,7 @@ namespace WPFImageViewer
 
         private void hideControlsZoom()
         {
-            titleBar.Visibility = Visibility.Collapsed;
+            titleBar.Visibility = Visibility.Hidden;
             navigationGrid.Visibility = Visibility.Collapsed;
             nextButtonGrid.Visibility = Visibility.Collapsed;
             previousButtonGrid.Visibility = Visibility.Collapsed;
