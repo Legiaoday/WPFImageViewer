@@ -8,6 +8,7 @@ using System.Windows.Media;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Windows.Input;
+using MyControlsLibrary;
 
 namespace WPFImageViewer
 {
@@ -15,12 +16,14 @@ namespace WPFImageViewer
     {
         MainWindow globalMainWindow;
         TransformedBitmap tbOriginal = new TransformedBitmap();
+        CustomTitleBar titleBar;
 
         public CropWindow(MainWindow mainWindow, BitmapImage bitmapImage)
         {
             if (bitmapImage != null)
             {
                 InitializeComponent();
+                initTitleBar();
                 Width = SystemParameters.PrimaryScreenWidth / 2;
                 Height = SystemParameters.PrimaryScreenHeight / 2;
                 RenderOptions.SetBitmapScalingMode(croppedImage, BitmapScalingMode.NearestNeighbor);//scaling mode. BitmapScalingMode.NearestNeighbor disables the smoothing when zooming the image
@@ -262,19 +265,6 @@ namespace WPFImageViewer
         #endregion
 
         #region Generic events
-        private void maximizeButton_Click(object sender, RoutedEventArgs e)
-        {
-            if (WindowState == WindowState.Maximized)
-            {
-                WindowState = WindowState.Normal;
-            }
-            else if (WindowState == WindowState.Normal)
-            {
-                WindowState = WindowState.Maximized;
-            }
-        }
-
-
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             if (SystemParameters.PrimaryScreenWidth / 2 > 640 && SystemParameters.PrimaryScreenHeight / 2 > 360)
@@ -288,13 +278,6 @@ namespace WPFImageViewer
 
             WindowState = WindowState.Maximized;
         }
-
-
-        private void closeButton_Click(object sender, RoutedEventArgs e)
-        {
-            this.Close();
-        }
-
 
         private void Window_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
         {
@@ -466,6 +449,22 @@ namespace WPFImageViewer
                 e.Handled = true;
             }
         }
+        #endregion
+
+        private void initTitleBar()
+        {
+            titleBar = new CustomTitleBar(this, mainGrid);//overloaded function that also accepts an icon as parameter, this icon parameter is optional
+            titleBar.MinimizeButtonVisibility = Visibility.Collapsed;
+            titleBar.Text = "";
+            titleBar.Height = 22;//recommended height = 22
+            titleBar.IsAutoHide = true;
+            titleBar.AutoHideDelay = 2000;
+            titleBar.IsPlayAnimation = true;
+            titleBar.AnimationInterval = 15;
+            titleBar.BackgroundOpacity = 0.0;        
+            titleBar.WindowDragMode = CustomTitleBar.DragMode.None;
+            titleBar.DoubleClickResize = false;
+            titleBar.FullScreenMode = true;
+        }
     }
-    #endregion
 }

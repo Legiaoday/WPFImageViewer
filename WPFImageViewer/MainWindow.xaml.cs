@@ -784,7 +784,23 @@ namespace WPFImageViewer
         #endregion
 
         #region Generic methods
-
+        private void initTitleBar()
+        {
+            titleBar = new CustomTitleBar(this, mainGrid);//overloaded function that also accepts an icon as parameter, this icon parameter is optional
+            titleBar.Text = "";
+            titleBar.TextAlignment = HorizontalAlignment.Center;
+            titleBar.Height = 22;//recommended height = 22
+            titleBar.IsAutoHide = true;
+            titleBar.AutoHideDelay = 4000;
+            titleBar.IsPlayAnimation = true;
+            titleBar.AnimationInterval = 15;
+            titleBar.SetBackgroundColorHex("#383838");//00 = black, ff = white
+            titleBar.BackgroundOpacity = 0.7;
+            titleBar.WindowDragMode = CustomTitleBar.DragMode.Both;
+            titleBar.DoubleClickResize = true;
+            titleBar.FullScreenMode = true;
+            titleBar.TextColor = Brushes.White;
+        }
 
         #region setMainMedia
         public void setMainMedia()
@@ -877,7 +893,6 @@ namespace WPFImageViewer
         }
         #endregion
 
-
         #region loadConfigs
         private void loadConfigs(string[] args)
         {
@@ -953,7 +968,6 @@ namespace WPFImageViewer
         }
         #endregion
 
-
         #region getFolderMedia
         private void getFolderMedia()
         {
@@ -1006,7 +1020,6 @@ namespace WPFImageViewer
         }
         #endregion
 
-
         private void openPicture()
         {
             System.Windows.Forms.OpenFileDialog openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
@@ -1021,7 +1034,6 @@ namespace WPFImageViewer
                 getFolderMedia();
             }
         }
-
 
         #region getMediaType
         private void getMediaType()
@@ -1076,13 +1088,11 @@ namespace WPFImageViewer
         }
         #endregion
 
-
         //Adds zeros to the left of a char that constains 0~9 so when it can be sorted properly. Returns a string with the zeros. In the in the actual filename remains untouched
         private static string PadNumbers(string input)
         {
             return System.Text.RegularExpressions.Regex.Replace(input, "[0-9]+", match => match.Value.PadLeft(222, '0'));
         }
-
 
         //Updates the current image index. It's not part of the getFolderImages() method for 'some' reason, so let it be for now
         private void setCurrentImageIndex()
@@ -1097,14 +1107,12 @@ namespace WPFImageViewer
             }
         }
 
-
         //Forces the garbage collector to 'collect' unused resource
         private void forceGC()
         {
             GC.Collect();
             GC.WaitForPendingFinalizers();
         }
-
 
         #region Hide/show controls
         private async void hideNavigationControls()
@@ -1206,7 +1214,6 @@ namespace WPFImageViewer
         }
         #endregion
 
-
         private void loadConfigsDelay()
         {
             lineWidth = mainImage.ActualWidth;
@@ -1219,20 +1226,17 @@ namespace WPFImageViewer
             mainMediaGrid.Children.Add(loading.ClientBounds);
         }
 
-
         public void canceLTokenTitle()
         {
             tokenSourceTitle.Cancel();
             tokenSourceTitle = new CancellationTokenSource();
         }
 
-
         public void canceLTokenNavigation()
         {
             tokenSourceNavigation.Cancel();
             tokenSourceNavigation = new CancellationTokenSource();
         }
-
 
         private void deactivateCrop()
         {
@@ -2552,23 +2556,5 @@ namespace WPFImageViewer
             }
         }
         #endregion
-
-        private void initTitleBar()
-        {
-            titleBar = new CustomTitleBar(this, mainGrid);//overloaded function that also accepts an icon as parameter, this icon parameter is optional
-            titleBar.Text = "";
-            titleBar.TextAlignment = HorizontalAlignment.Center;
-            titleBar.Height = 22;//recommended height = 22
-            titleBar.IsAutoHide = true;
-            titleBar.AutoHideDelay = 4000;
-            titleBar.IsPlayAnimation = true;
-            titleBar.AnimationInterval = 15;
-            titleBar.SetBackgroundColorHex("#383838");//00 = black, ff = white
-            titleBar.BackgroundOpacity = 0.7;
-            titleBar.WindowDragMode = CustomTitleBar.DragMode.Both;
-            titleBar.DoubleClickResize = true;
-            titleBar.FullScreenMode = true;
-            titleBar.TextColor = Brushes.White;
-        }
     }
 }
