@@ -812,7 +812,7 @@ namespace WPFImageViewer
             timer.Stop();
             mainMedia.Stop();
             getMediaType();
-            if (isMediaPlaying && mediaType == MediaType.Image) { loading.StopAnimation(); }
+            loading.StopAnimation();
             isMediaPlaying = false;
             titleBar.Text = null;
             #endregion
