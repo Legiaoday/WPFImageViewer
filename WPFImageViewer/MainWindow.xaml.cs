@@ -214,7 +214,7 @@ namespace WPFImageViewer
             {
                 deleteFile();
             }
-            else if (e.Key == Key.S && Keyboard.IsKeyDown(Key.LeftCtrl))
+            else if (e.Key == Key.S && (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl)))
             {
                 if (defaultMedia != null && mainImage.Source != null || mainMedia.Source != null)
                 {
@@ -228,7 +228,7 @@ namespace WPFImageViewer
                     }
                 }
             }
-            else if (e.Key == Key.X && Keyboard.IsKeyDown(Key.LeftCtrl))
+            else if (e.Key == Key.X && (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl)))
             {
                 if (defaultMedia != null && mainImage.Source != null || mainMedia.Source != null)
                 {
