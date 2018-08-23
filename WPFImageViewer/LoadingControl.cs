@@ -95,7 +95,6 @@ namespace WPFImageViewer
             initObjects();
         }
 
-
         private void initObjects ()
         {
             ClientBounds = new Grid();
@@ -158,14 +157,12 @@ namespace WPFImageViewer
             timer.Tick += new EventHandler(timer_Tick);
         }
 
-
         public void PlayAnimation ()
         {
             loadingThread = new Thread(loadingThreadWork);
             loadingThread.IsBackground = true;
             loadingThread.Start();
         }
-
 
         public void StopAnimation()
         {
@@ -183,14 +180,12 @@ namespace WPFImageViewer
             opacitySub5 = 100;
         }
 
-
         private void loadingThreadWork()
         {
             Application.Current.Dispatcher.Invoke(() => ClientBounds.Visibility = Visibility.Visible);
             timer.Start();
         }
 
-      
         void timer_Tick(object sender, EventArgs e)
         {
             square1.Fill = new SolidColorBrush() { Color = Colors.AliceBlue, Opacity = opacitySub1 / 100 };
