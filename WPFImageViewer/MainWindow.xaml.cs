@@ -879,6 +879,19 @@ namespace WPFImageViewer
                 mainImage.Source = null;
                 fileName = "File not found!";
             }
+            catch (ArgumentException ex)
+            {
+                if(ex.HResult == -2147024809)//-2147024809 = "Value does not fall within the expected range."
+                {
+                    ignoreImageColorProfile();
+                }
+            }
+            catch (Exception ex)
+            {
+                mainImage.Source = null;
+                fileName = "Error reading file!";
+                MessageBox.Show(ex.ToString());
+            }
 
             Title = fileName;
             titleBar.Text = fileName + " (" + (defaultImageIndex + 1) + "/" + listOfFiles.Count + ")";
@@ -889,6 +902,36 @@ namespace WPFImageViewer
             if (isZoomed)
             {
                 revertZoom();
+            }
+        }
+
+        private void ignoreImageColorProfile ()//laods an image ignoring the color profile the BitmapImage, used when the "Value does not fall within the expected range." exception is thrown
+        {
+            try
+            {
+                #region Variables/objects resets
+                if (mainMedia.Source != null) mainMedia.Source = null;
+                if (TaskbarItemInfo != null) TaskbarItemInfo = null;
+                mainMedia.Visibility = Visibility.Collapsed;
+                #endregion
+
+                BitmapImage image = new BitmapImage();
+                image.BeginInit();
+                image.CacheOption = BitmapCacheOption.OnLoad;
+                image.CreateOptions = BitmapCreateOptions.IgnoreColorProfile;
+                image.UriSource = new Uri(defaultMedia);
+                image.EndInit();
+                oriMediaRatio = new Point(image.PixelWidth, image.PixelHeight);
+                mainImage.Source = image;
+                fileName = System.IO.Path.GetFileName(defaultMedia);
+
+                ImageBackGround.Visibility = (mediaExtension == MediaExtension.PNG) ? ImageBackGround.Visibility = Visibility.Visible : ImageBackGround.Visibility = Visibility.Collapsed;
+            }
+            catch (Exception ex)
+            {
+                mainImage.Source = null;
+                fileName = "Error reading file!";
+                MessageBox.Show(ex.ToString());
             }
         }
         #endregion
