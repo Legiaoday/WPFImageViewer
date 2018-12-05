@@ -16,6 +16,7 @@ using System.Windows.Threading;
 using System.Globalization;
 using Microsoft.VisualBasic.FileIO;
 using MyControlsLibrary;
+using MiscFunctionsLibrary;
 #endregion
 
 namespace WPFImageViewer
@@ -1261,12 +1262,14 @@ namespace WPFImageViewer
         {
             lineWidth = mainImage.ActualWidth;
             lineHeight = mainImage.ActualHeight;
-            Left = settings.Left;
-            Top = settings.Top;
             Width = settings.Width;
             Height = settings.Height;
             isInitResize = true;
             mainMediaGrid.Children.Add(loading.ClientBounds);
+
+            Point p = GenericFunctions.CorrectWindowBounds(settings.Left, settings.Top, 100, 50);
+            this.Left = p.X;
+            this.Top = p.Y;
         }
 
         public void canceLTokenTitle()

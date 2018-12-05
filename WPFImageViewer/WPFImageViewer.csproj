@@ -60,6 +60,9 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.VisualBasic" />
+    <Reference Include="MiscFunctionsLibrary">
+      <HintPath>..\..\MiscFunctionsLibrary\MiscFunctionsLibrary\bin\Release\MiscFunctionsLibrary.dll</HintPath>
+    </Reference>
     <Reference Include="MyControlsLibrary">
       <HintPath>..\..\MyControlsLibrary\MyControlsLibrary\bin\Release\MyControlsLibrary.dll</HintPath>
     </Reference>
