@@ -100,7 +100,6 @@
       <DependentUpon>Thumbnail.xaml</DependentUpon>
     </Compile>
     <Compile Include="Wallpaper.cs" />
-    <Compile Include="XMLHandler.cs" />
     <Compile Include="ZoomImage.cs" />
     <Page Include="CropWindow.xaml">
       <SubType>Designer</SubType>

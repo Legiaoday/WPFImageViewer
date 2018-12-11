@@ -300,13 +300,13 @@ namespace WPFImageViewer
 
         private void mainMedia_MediaEnded(object sender, RoutedEventArgs e)
         {
-            switch (settings.AfterPlayback)
+            switch (settings.GetItemValue("AfterPlayback"))
             {
-                case XMLSettings.AfterP.Loop:
+                case "Loop":
                     if (hasTimeSpan) mainMedia.Position = TimeSpan.Zero;
                     else mainMedia.Position = new TimeSpan(0, 0, 0, 0, 1);
                     break;
-                case XMLSettings.AfterP.Next:
+                case "Next":
                     if (listOfFiles.Count > 1)
                     {
                         nextButton_Click(sender, e);
@@ -320,10 +320,15 @@ namespace WPFImageViewer
                         else mainMedia.Position = new TimeSpan(0, 0, 0, 0, 1);
                     }
                     break;
-                case XMLSettings.AfterP.Nothing:
+                case "Nothing":
                     mainMedia.Stop();
                     isMediaPlaying = false;
                     taskBarMedia.ProgressState = TaskbarItemProgressState.Error;
+                    if (hasTimeSpan) mainMedia.Position = TimeSpan.Zero;
+                    else mainMedia.Position = new TimeSpan(0, 0, 0, 0, 1);
+                    break;
+                default:
+                    settings.UpdateItem("AfterPlayback", "Loop", true);
                     if (hasTimeSpan) mainMedia.Position = TimeSpan.Zero;
                     else mainMedia.Position = new TimeSpan(0, 0, 0, 0, 1);
                     break;
@@ -380,10 +385,10 @@ namespace WPFImageViewer
 
             if (WindowState == WindowState.Maximized && isInitResize)
             {
-                settings.Left = Left;
-                settings.Top = Top;
-                settings.Width = e.PreviousSize.Width;
-                settings.Height = e.PreviousSize.Height;
+                settings.UpdateItem("Left", Left.ToString(), true);
+                settings.UpdateItem("Top", Top.ToString(), true);
+                settings.UpdateItem("Width", Width.ToString(), true);
+                settings.UpdateItem("Height", Height.ToString(), true);
             }
         }
         #endregion
@@ -402,28 +407,6 @@ namespace WPFImageViewer
         private void mainWindow_LocationChanged(object sender, EventArgs e)
         {
             if (!isSettingsChanged && isInitResize) isSettingsChanged = true;
-        }
-
-
-        private void mainWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
-        {
-            if (isSettingsChanged)
-            {
-                settings.Volume = mainMedia.Volume;
-                settings.WindowState = WindowState;
-                settings.Zoom = zoomPercentage;
-                settings.ZoomStep = halfZoomIncrementPercent;
-
-                if (WindowState == WindowState.Normal)
-                {
-                    settings.Left = Left;
-                    settings.Top = Top;
-                    settings.Width = Width;
-                    settings.Height = Height;
-                }
-
-                XMLHandler.writeConfigXML(settings);
-            }
         }
 
 
@@ -652,13 +635,13 @@ namespace WPFImageViewer
                 {
                     mainMedia.IsMuted = false;
                     volumeTriangle.Fill = Brushes.DarkSlateBlue;
-                    settings.IsMuted = false;
+                    settings.UpdateItem("IsMuted", "false", true);
                 }
                 else
                 {
                     mainMedia.IsMuted = true;
                     volumeTriangle.Fill = Brushes.Red;
-                    settings.IsMuted = true;
+                    settings.UpdateItem("IsMuted", "true", true);
                 }
 
                 isSettingsChanged = true;
@@ -937,20 +920,20 @@ namespace WPFImageViewer
         }
         #endregion
 
-        #region loadConfigs
+        #region Load and save settings
         private void loadConfigs(string[] args)
         {
             #region settings
-            settings = XMLHandler.loadConfigXML();
-            WindowState = settings.WindowState;
-            mainMedia.Volume = settings.Volume;
-            volumeSlider.Value = settings.Volume * 100;
-            zoomPercentage = settings.Zoom;
-            halfZoomIncrementPercent = settings.ZoomStep;
-            if (settings.IsMuted)
+            settings.LoadFromFile("WPFImgConfig.xml");  
+            WindowState = settings.ConvertToWinState("WindowState", WindowState.Normal);
+            mainMedia.Volume = settings.ConvertToDouble("Volume", 100);
+            volumeSlider.Value = settings.ConvertToDouble("Volume", 100) * 100;
+            zoomPercentage = settings.ConvertToShort("Zoom", 100);
+            halfZoomIncrementPercent = settings.ConvertToShort("ZoomStep", 50);
+            if (settings.ConvertToBool("IsMuted", false))
             {
                 mainMedia.IsMuted = true;
-                volumeTriangle.Fill = Brushes.Red;
+                volumeTriangle.Fill = Brushes.Red; 
             }
             #endregion
 
@@ -981,7 +964,7 @@ namespace WPFImageViewer
             #endregion
 
             rectangle.Stroke = Brushes.Red;
-            rectangle.Fill = new SolidColorBrush() { Color = Colors.BlueViolet, Opacity = 0.25f };
+            rectangle.Fill = new SolidColorBrush() { Color = Colors.BlueViolet, Opacity = 0.25f }; 
 
             //changeMaximizeButton();//the window_StateChanged is being skipped on the startup because of the style of the window so this method is also being called here
             zoomMenuItem.Header = "Zoom (" + zoomPercentage + "%)";
@@ -1011,16 +994,37 @@ namespace WPFImageViewer
             }
         }
 
+        private void mainWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            if (isSettingsChanged)
+            {
+                settings.UpdateItem("Volume", mainMedia.Volume.ToString(), true);
+                settings.UpdateItem("WindowState", WindowState.ToString(), true);
+                settings.UpdateItem("Zoom", zoomPercentage.ToString(), true);
+                settings.UpdateItem("ZoomStep", halfZoomIncrementPercent.ToString(), true);
+
+                if (WindowState == WindowState.Normal)
+                {
+                    settings.UpdateItem("Left", Left.ToString(), true);
+                    settings.UpdateItem("Top", Top.ToString(), true);
+                    settings.UpdateItem("Width", Width.ToString(), true);
+                    settings.UpdateItem("Height", Height.ToString(), true);
+                }
+
+                settings.WriteToFile("WPFImgConfig.xml");
+            }
+        }
+
         private void loadConfigsDelay()
         {
             lineWidth = mainImage.ActualWidth;
             lineHeight = mainImage.ActualHeight;
-            Width = settings.Width;
-            Height = settings.Height;
+            Width = settings.ConvertToDouble("Width", Width);
+            Height = settings.ConvertToDouble("Height", Height);
             isInitResize = true;
             mainMediaGrid.Children.Add(loading.ClientBounds);
 
-            Point p = GenericFunctions.CorrectWindowBounds(settings.Left, settings.Top, 100, 50);
+            Point p = GenericFunctions.CorrectWindowBounds(settings.ConvertToDouble("Left", 0), settings.ConvertToDouble("Top", 0), 100, 50);
             this.Left = p.X;
             this.Top = p.Y;
         }
@@ -1036,13 +1040,13 @@ namespace WPFImageViewer
                 {
                     string extensions = "*.jpg,*.png,*.gif,*.jpeg,*.mp4,*.webm,*.mkv,*.avi, *.mp3";
 
-                    switch (settings.OrderBy)
+                    switch (settings.GetItemValue("OrderBy"))
                     {
-                        case XMLSettings.OrderB.Name:
+                        case "Name":
                             listOfFiles = Directory.EnumerateFiles(System.IO.Path.GetDirectoryName(defaultMedia), "*.*").Select(path => System.IO.Path.GetFileName(path)).Where(s => extensions.Contains(System.IO.Path.GetExtension(s).ToLower())).ToList();
                             listOfFiles = listOfFiles.OrderBy(x => PadNumbers(x)).ToList();//sorts the filenames properly. PadNumbers method is used to pad the numbers
                             break;
-                        case XMLSettings.OrderB.Date:
+                        case "Date":
                             var listFileToRename = new List<FileToRename>();
                             listOfFiles = Directory.EnumerateFiles(System.IO.Path.GetDirectoryName(defaultMedia), "*.*").Select(path => System.IO.Path.GetFileName(path)).Where(s => extensions.Contains(System.IO.Path.GetExtension(s).ToLower())).ToList();
 
@@ -1064,6 +1068,11 @@ namespace WPFImageViewer
                             {
                                 listOfFiles.Add(listFileToRename[i].fileName);
                             }
+                            break;
+                        default:
+                            settings.UpdateItem("OrderBy", "Name", true);
+                            listOfFiles = Directory.EnumerateFiles(System.IO.Path.GetDirectoryName(defaultMedia), "*.*").Select(path => System.IO.Path.GetFileName(path)).Where(s => extensions.Contains(System.IO.Path.GetExtension(s).ToLower())).ToList();
+                            listOfFiles = listOfFiles.OrderBy(x => PadNumbers(x)).ToList();//sorts the filenames properly. PadNumbers method is used to pad the numbers
                             break;
                     }
 
@@ -1545,15 +1554,15 @@ namespace WPFImageViewer
                 {
                     case "afterPLoop":
                         afterPLoop.IsChecked = true;
-                        settings.AfterPlayback = XMLSettings.AfterP.Loop;
+                        settings.UpdateItem("AfterPlayback", "Loop", true);
                         break;
                     case "afterPNext":
                         afterPNext.IsChecked = true;
-                        settings.AfterPlayback = XMLSettings.AfterP.Next;
+                        settings.UpdateItem("AfterPlayback", "Next", true);
                         break;
                     case "afterPNothing":
                         afterPNothing.IsChecked = true;
-                        settings.AfterPlayback = XMLSettings.AfterP.Nothing;
+                        settings.UpdateItem("AfterPlayback", "Nothing", true);
                         break;
                 }
 
@@ -1569,16 +1578,19 @@ namespace WPFImageViewer
         {
             if (firstAfterPCheck)
             {
-                switch (settings.AfterPlayback)
+                switch (settings.GetItemValue("AfterPlayback"))
                 {
-                    case XMLSettings.AfterP.Loop:
+                    case "Loop":
                         afterPLoop.IsChecked = true;
                         break;
-                    case XMLSettings.AfterP.Next:
+                    case "Next":
                         afterPNext.IsChecked = true;
                         break;
-                    case XMLSettings.AfterP.Nothing:
+                    case "Nothing":
                         afterPNothing.IsChecked = true;
+                        break;
+                    default:
+                        afterPLoop.IsChecked = true;
                         break;
                 }
 
@@ -1612,22 +1624,22 @@ namespace WPFImageViewer
                     case "orderBName":
                         orderBName.IsChecked = true;
                         orderBName2.IsChecked = true;
-                        settings.OrderBy = XMLSettings.OrderB.Name;
+                        settings.UpdateItem("OrderBy", "Name", true);
                         break;
                     case "orderBDate":
                         orderBDate.IsChecked = true;
                         orderBDate2.IsChecked = true;
-                        settings.OrderBy = XMLSettings.OrderB.Date;
+                        settings.UpdateItem("OrderBy", "Date", true);
                         break;
                     case "orderBName2":
                         orderBName.IsChecked = true;
                         orderBName2.IsChecked = true;
-                        settings.OrderBy = XMLSettings.OrderB.Name;
+                         settings.UpdateItem("OrderBy", "Name", true);
                         break;
                     case "orderBDate2":
                         orderBDate.IsChecked = true;
                         orderBDate2.IsChecked = true;
-                        settings.OrderBy = XMLSettings.OrderB.Date;
+                        settings.UpdateItem("OrderBy", "Date", true);
                         break;
                 }
 
@@ -1660,15 +1672,20 @@ namespace WPFImageViewer
         {
             if (firstOrderBCheck)
             {
-                switch (settings.OrderBy)
+                switch (settings.GetItemValue("OrderBy"))
                 {
-                    case XMLSettings.OrderB.Name:
+                    case "Name":
                         orderBName.IsChecked = true;
                         orderBName2.IsChecked = true;
                         break;
-                    case XMLSettings.OrderB.Date:
+                    case "Date":
                         orderBDate.IsChecked = true;
                         orderBDate2.IsChecked = true;
+                        break;
+                    default:
+                        settings.UpdateItem("OrderBy", "Name", true);
+                        orderBName.IsChecked = true;
+                        orderBName2.IsChecked = true;
                         break;
                 }
 
@@ -1688,11 +1705,11 @@ namespace WPFImageViewer
             {
                 if (obj.IsChecked)
                 {
-                    settings.KeepRatio = false;
+                    settings.UpdateItem("KeepRatio", "false", true);
                 }
                 else
                 {
-                    settings.KeepRatio = true;
+                    settings.UpdateItem("KeepRatio", "true", true);
                 }
 
                 if (!isSettingsChanged && isInitResize) isSettingsChanged = true;
@@ -1711,7 +1728,7 @@ namespace WPFImageViewer
         {
             if (firstRatioCheck)
             {
-                if (settings.KeepRatio)
+                if (settings.ConvertToBool("KeepRatio", false))
                 {
                     keepRatio.IsChecked = true;
                     keepRatio2.IsChecked = true;
@@ -1776,7 +1793,7 @@ namespace WPFImageViewer
                 newPt = e.GetPosition(this.grip);
                 reWidth = this.Width + newPt.X - startPt.X;
 
-                if (settings.KeepRatio)
+                if (settings.ConvertToBool("KeepRatio", false))
                 {
                     reheight = (oriMediaRatio.Y / oriMediaRatio.X) * reWidth;
 
