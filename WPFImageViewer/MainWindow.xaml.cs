@@ -920,117 +920,6 @@ namespace WPFImageViewer
         }
         #endregion
 
-        #region Load and save settings
-        private void loadConfigs(string[] args)
-        {
-            #region settings
-            settings.LoadFromFile("WPFImgConfig.xml");  
-            WindowState = settings.ConvertToWinState("WindowState", WindowState.Normal);
-            mainMedia.Volume = settings.ConvertToDouble("Volume", 100);
-            volumeSlider.Value = settings.ConvertToDouble("Volume", 100) * 100;
-            zoomPercentage = settings.ConvertToShort("Zoom", 100);
-            halfZoomIncrementPercent = settings.ConvertToShort("ZoomStep", 50);
-            if (settings.ConvertToBool("IsMuted", false))
-            {
-                mainMedia.IsMuted = true;
-                volumeTriangle.Fill = Brushes.Red; 
-            }
-            #endregion
-
-            #region Lines
-            line = new Line();
-            line.StrokeThickness = 1;
-            line.Stroke = Brushes.Red;
-            line.SnapsToDevicePixels = true;
-            line.SetValue(RenderOptions.EdgeModeProperty, EdgeMode.Aliased);
-
-            line2 = new Line();
-            line2.StrokeThickness = 1;
-            line2.Stroke = Brushes.SkyBlue;
-            line2.SnapsToDevicePixels = true;
-            line2.SetValue(RenderOptions.EdgeModeProperty, EdgeMode.Aliased);
-
-            line3 = new Line();
-            line3.StrokeThickness = 1;
-            line3.Stroke = Brushes.Red;
-            line3.SnapsToDevicePixels = true;
-            line3.SetValue(RenderOptions.EdgeModeProperty, EdgeMode.Aliased);
-
-            line4 = new Line();
-            line4.StrokeThickness = 1;
-            line4.Stroke = Brushes.SkyBlue;
-            line4.SnapsToDevicePixels = true;
-            line4.SetValue(RenderOptions.EdgeModeProperty, EdgeMode.Aliased);
-            #endregion
-
-            rectangle.Stroke = Brushes.Red;
-            rectangle.Fill = new SolidColorBrush() { Color = Colors.BlueViolet, Opacity = 0.25f }; 
-
-            //changeMaximizeButton();//the window_StateChanged is being skipped on the startup because of the style of the window so this method is also being called here
-            zoomMenuItem.Header = "Zoom (" + zoomPercentage + "%)";
-            zoomStepMenuItem.Header = "Zoom Step (" + halfZoomIncrementPercent + "%)";
-            navigationGridWhite.Visibility = Visibility.Collapsed;
-            hideNextButton();
-            hidePreviousButton();
-            hideVolumeControls();
-            hideVideoControls();
-            lblVolume.Content = Convert.ToUInt32(volumeSlider.Value);
-            taskBarMedia.ProgressState = TaskbarItemProgressState.Normal;
-            RenderOptions.SetBitmapScalingMode(mainImage, BitmapScalingMode.LowQuality);//scaling mode. BitmapScalingMode.NearestNeighbor disables the smoothing when zooming the image
-
-            timer = new DispatcherTimer();
-            timer.Interval = TimeSpan.FromMilliseconds(200);
-            timer.Tick += new EventHandler(timer_Tick);
-
-            timerSeek = new DispatcherTimer();
-            timerSeek.Interval = TimeSpan.FromMilliseconds(25);
-            timerSeek.Tick += new EventHandler(updatePopup);
-
-            if (args.Length == 1)
-            {
-                defaultMedia = args[0];
-                setMainMedia();
-                getFolderMedia();
-            }
-        }
-
-        private void mainWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
-        {
-            if (isSettingsChanged)
-            {
-                settings.UpdateItem("Volume", mainMedia.Volume.ToString(), true);
-                settings.UpdateItem("WindowState", WindowState.ToString(), true);
-                settings.UpdateItem("Zoom", zoomPercentage.ToString(), true);
-                settings.UpdateItem("ZoomStep", halfZoomIncrementPercent.ToString(), true);
-
-                if (WindowState == WindowState.Normal)
-                {
-                    settings.UpdateItem("Left", Left.ToString(), true);
-                    settings.UpdateItem("Top", Top.ToString(), true);
-                    settings.UpdateItem("Width", Width.ToString(), true);
-                    settings.UpdateItem("Height", Height.ToString(), true);
-                }
-
-                settings.WriteToFile("WPFImgConfig.xml");
-            }
-        }
-
-        private void loadConfigsDelay()
-        {
-            lineWidth = mainImage.ActualWidth;
-            lineHeight = mainImage.ActualHeight;
-            Width = settings.ConvertToDouble("Width", Width);
-            Height = settings.ConvertToDouble("Height", Height);
-            isInitResize = true;
-            mainMediaGrid.Children.Add(loading.ClientBounds);
-
-            Point p = GenericFunctions.CorrectWindowBounds(settings.ConvertToDouble("Left", 0), settings.ConvertToDouble("Top", 0), 100, 50);
-            this.Left = p.X;
-            this.Top = p.Y;
-        }
-
-        #endregion
-
         #region getFolderMedia
         private void getFolderMedia()
         {
@@ -2620,5 +2509,118 @@ namespace WPFImageViewer
             }
         }
         #endregion
+
+        #region Load and save settings
+        private void loadConfigs(string[] args)
+        {
+            #region settings
+            settings.LoadFromFile(AppDomain.CurrentDomain.BaseDirectory + "WPFImgConfig.xml");
+            WindowState = settings.ConvertToWinState("WindowState", WindowState.Normal);
+            mainMedia.Volume = settings.ConvertToDouble("Volume", 100);
+            volumeSlider.Value = settings.ConvertToDouble("Volume", 100) * 100;
+            zoomPercentage = settings.ConvertToShort("Zoom", 100);
+            halfZoomIncrementPercent = settings.ConvertToShort("ZoomStep", 50);
+            if (settings.ConvertToBool("IsMuted", false))
+            {
+                mainMedia.IsMuted = true;
+                volumeTriangle.Fill = Brushes.Red;
+            }
+            #endregion
+
+            #region Lines
+            line = new Line();
+            line.StrokeThickness = 1;
+            line.Stroke = Brushes.Red;
+            line.SnapsToDevicePixels = true;
+            line.SetValue(RenderOptions.EdgeModeProperty, EdgeMode.Aliased);
+
+            line2 = new Line();
+            line2.StrokeThickness = 1;
+            line2.Stroke = Brushes.SkyBlue;
+            line2.SnapsToDevicePixels = true;
+            line2.SetValue(RenderOptions.EdgeModeProperty, EdgeMode.Aliased);
+
+            line3 = new Line();
+            line3.StrokeThickness = 1;
+            line3.Stroke = Brushes.Red;
+            line3.SnapsToDevicePixels = true;
+            line3.SetValue(RenderOptions.EdgeModeProperty, EdgeMode.Aliased);
+
+            line4 = new Line();
+            line4.StrokeThickness = 1;
+            line4.Stroke = Brushes.SkyBlue;
+            line4.SnapsToDevicePixels = true;
+            line4.SetValue(RenderOptions.EdgeModeProperty, EdgeMode.Aliased);
+            #endregion
+
+            #region General
+            rectangle.Stroke = Brushes.Red;
+            rectangle.Fill = new SolidColorBrush() { Color = Colors.BlueViolet, Opacity = 0.25f };
+
+            //changeMaximizeButton();//the window_StateChanged is being skipped on the startup because of the style of the window so this method is also being called here
+            zoomMenuItem.Header = "Zoom (" + zoomPercentage + "%)";
+            zoomStepMenuItem.Header = "Zoom Step (" + halfZoomIncrementPercent + "%)";
+            navigationGridWhite.Visibility = Visibility.Collapsed;
+            hideNextButton();
+            hidePreviousButton();
+            hideVolumeControls();
+            hideVideoControls();
+            lblVolume.Content = Convert.ToUInt32(volumeSlider.Value);
+            taskBarMedia.ProgressState = TaskbarItemProgressState.Normal;
+            RenderOptions.SetBitmapScalingMode(mainImage, BitmapScalingMode.LowQuality);//scaling mode. BitmapScalingMode.NearestNeighbor disables the smoothing when zooming the image
+
+            timer = new DispatcherTimer();
+            timer.Interval = TimeSpan.FromMilliseconds(200);
+            timer.Tick += new EventHandler(timer_Tick);
+
+            timerSeek = new DispatcherTimer();
+            timerSeek.Interval = TimeSpan.FromMilliseconds(25);
+            timerSeek.Tick += new EventHandler(updatePopup);
+
+            if (args.Length == 1)
+            {
+                defaultMedia = args[0];
+                setMainMedia();
+                getFolderMedia();
+            } 
+            #endregion
+        }
+
+        private void mainWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            if (isSettingsChanged)
+            {
+                settings.UpdateItem("Volume", mainMedia.Volume.ToString(), true);
+                settings.UpdateItem("WindowState", WindowState.ToString(), true);
+                settings.UpdateItem("Zoom", zoomPercentage.ToString(), true);
+                settings.UpdateItem("ZoomStep", halfZoomIncrementPercent.ToString(), true);
+
+                if (WindowState == WindowState.Normal)
+                {
+                    settings.UpdateItem("Left", Left.ToString(), true);
+                    settings.UpdateItem("Top", Top.ToString(), true);
+                    settings.UpdateItem("Width", Width.ToString(), true);
+                    settings.UpdateItem("Height", Height.ToString(), true);
+                }
+
+                settings.WriteToFile(AppDomain.CurrentDomain.BaseDirectory + "WPFImgConfig.xml");
+            }
+        }
+
+        private void loadConfigsDelay()
+        {
+            lineWidth = mainImage.ActualWidth;
+            lineHeight = mainImage.ActualHeight;
+            Width = settings.ConvertToDouble("Width", Width);
+            Height = settings.ConvertToDouble("Height", Height);
+            isInitResize = true;
+            mainMediaGrid.Children.Add(loading.ClientBounds);
+
+            Point p = GenericFunctions.CorrectWindowBounds(settings.ConvertToDouble("Left", 0), settings.ConvertToDouble("Top", 0), 100, 50);
+            this.Left = p.X;
+            this.Top = p.Y;
+        }
+        #endregion
+
     }
 }
